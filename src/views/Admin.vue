@@ -3,24 +3,57 @@
     <h1>UnityPackage管理</h1>
     
     <!-- 文件上传区域 -->
-    <el-upload
-      class="upload-demo"
-      drag
-      action="/api/upload"
-      accept=".unitypackage"
-      :on-success="handleUploadSuccess"
-      :on-error="handleUploadError"
-      :before-upload="beforeUpload">
-      <el-icon class="el-icon--upload"><upload-filled /></el-icon>
-      <div class="el-upload__text">
-        拖拽文件到此处或 <em>点击上传</em>
+    <div class="upload-container">
+      <div class="upload-box">
+        <h3>UnityPackage文件</h3>
+        <el-upload
+          class="upload-demo"
+          drag
+          action="/api/upload"
+          accept=".unitypackage"
+          :auto-upload="false"
+          :on-change="handlePackageChange"
+          :before-upload="beforeUpload"
+          ref="packageUploadRef">
+          <el-icon class="el-icon--upload"><upload-filled /></el-icon>
+          <div class="el-upload__text">
+            拖拽文件到此处或 <em>点击选择</em>
+          </div>
+          <template #tip>
+            <div class="el-upload__tip">
+              只能上传.unitypackage文件
+            </div>
+          </template>
+        </el-upload>
       </div>
-      <template #tip>
-        <div class="el-upload__tip">
-          只能上传.unitypackage文件
-        </div>
-      </template>
-    </el-upload>
+
+      <div class="upload-box">
+        <h3>预览图</h3>
+        <el-upload
+          class="upload-demo"
+          drag
+          action="/api/upload/preview"
+          accept="image/*"
+          :auto-upload="false"
+          :on-change="handlePreviewChange"
+          :before-upload="beforePreviewUpload"
+          ref="previewUploadRef">
+          <el-icon class="el-icon--upload"><upload-filled /></el-icon>
+          <div class="el-upload__text">
+            拖拽图片到此处或 <em>点击选择</em>
+          </div>
+          <template #tip>
+            <div class="el-upload__tip">
+              请上传预览图
+            </div>
+          </template>
+        </el-upload>
+      </div>
+    </div>
+
+    <div class="upload-actions">
+      <el-button type="primary" :disabled="!canUpload" @click="handleUpload">上传文件</el-button>
+    </div>
 
     <!-- 文件列表 -->
     <div class="package-list">
@@ -119,6 +152,15 @@ import { ref, nextTick, onMounted } from 'vue'
 import { UploadFilled, Plus } from '@element-plus/icons-vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 
+// 上传组件引用
+const packageUploadRef = ref()
+const previewUploadRef = ref()
+
+// 上传文件状态
+const packageFile = ref(null)
+const previewFile = ref(null)
+const canUpload = ref(false)
+
 // 文件列表数据
 const packageList = ref([])
 
@@ -152,13 +194,22 @@ const inputValue = ref('')
 const InputRef = ref()
 
 // 上传相关处理函数
-const handleUploadSuccess = (response) => {
-  ElMessage.success('上传成功')
-  fetchPackageList() // 上传成功后刷新列表
+const handlePackageChange = (file) => {
+  if (file) {
+    packageFile.value = file
+    checkUploadStatus()
+  }
 }
 
-const handleUploadError = () => {
-  ElMessage.error('上传失败')
+const handlePreviewChange = (file) => {
+  if (file) {
+    previewFile.value = file
+    checkUploadStatus()
+  }
+}
+
+const checkUploadStatus = () => {
+  canUpload.value = packageFile.value && previewFile.value
 }
 
 const beforeUpload = (file) => {
@@ -166,7 +217,63 @@ const beforeUpload = (file) => {
   if (!isUnityPackage) {
     ElMessage.error('只能上传.unitypackage文件')
   }
-  return isUnityPackage
+  return false // 阻止自动上传
+}
+
+const beforePreviewUpload = (file) => {
+  const isImage = file.type.startsWith('image/')
+  if (!isImage) {
+    ElMessage.error('只能上传图片文件')
+  }
+  return false // 阻止自动上传
+}
+
+const handleUpload = async () => {
+  if (!packageFile.value || !previewFile.value) {
+    ElMessage.warning('请同时上传UnityPackage文件和预览图')
+    return
+  }
+
+  try {
+    // 先上传预览图
+    const previewFormData = new FormData()
+    previewFormData.append('file', previewFile.value.raw)
+    const previewResponse = await fetch('/api/upload/preview', {
+      method: 'POST',
+      body: previewFormData
+    })
+    const previewData = await previewResponse.json()
+
+    if (!previewResponse.ok) {
+      throw new Error('预览图上传失败')
+    }
+
+    // 上传UnityPackage文件
+    const packageFormData = new FormData()
+    packageFormData.append('file', packageFile.value.raw)
+    packageFormData.append('preview', previewData.url) // 添加预览图URL
+
+    const packageResponse = await fetch('/api/upload', {
+      method: 'POST',
+      body: packageFormData
+    })
+
+    if (!packageResponse.ok) {
+      throw new Error('文件上传失败')
+    }
+
+    ElMessage.success('上传成功')
+    fetchPackageList() // 刷新列表
+
+    // 清空上传状态
+    packageFile.value = null
+    previewFile.value = null
+    canUpload.value = false
+    packageUploadRef.value.clearFiles()
+    previewUploadRef.value.clearFiles()
+  } catch (error) {
+    ElMessage.error(error.message || '上传失败')
+  }
 }
 
 // 预览图上传相关
@@ -214,9 +321,24 @@ const handleDelete = (row) => {
   });
 }
 
-const handleSave = () => {
-  // TODO: 实现保存功能
-  dialogVisible.value = false
+const handleSave = async () => {
+  try {
+    const response = await fetch(`/api/files/${editForm.value.id}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(editForm.value),
+    });
+    if (!response.ok) {
+      throw new Error('保存失败');
+    }
+    ElMessage.success('保存成功');
+    fetchPackageList(); // 刷新列表
+    dialogVisible.value = false;
+  } catch (error) {
+    ElMessage.error('保存失败：' + error.message);
+  }
 }
 
 // 标签相关处理函数
@@ -243,6 +365,31 @@ const handleInputConfirm = () => {
 <style scoped>
 .admin {
   padding: 20px;
+}
+
+.upload-container {
+  display: flex;
+  gap: 20px;
+  margin-bottom: 20px;
+}
+
+.upload-box {
+  flex: 1;
+  padding: 20px;
+  border: 1px solid var(--el-border-color);
+  border-radius: 8px;
+}
+
+.upload-box h3 {
+  margin-top: 0;
+  margin-bottom: 16px;
+  text-align: center;
+  color: var(--el-text-color-primary);
+}
+
+.upload-actions {
+  text-align: center;
+  margin-bottom: 20px;
 }
 
 .package-list {

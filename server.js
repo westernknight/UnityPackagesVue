@@ -94,6 +94,35 @@ app.post('/api/upload/preview', upload.single('file'), (req, res) => {
   });
 });
 
+// 更新文件信息
+app.put('/api/files/:id', (req, res) => {
+  try {
+    const fileId = parseInt(req.params.id);
+    const data = JSON.parse(readFileSync(DATA_FILE, 'utf8'));
+    const fileIndex = data.findIndex(item => item.id === fileId);
+
+    if (fileIndex === -1) {
+      return res.status(404).json({ error: '文件不存在' });
+    }
+
+    // 更新文件信息，保留原始文件路径等信息
+    const originalFile = data[fileIndex];
+    data[fileIndex] = {
+      ...originalFile,
+      name: req.body.name,
+      description: req.body.description,
+      tags: req.body.tags,
+      preview: req.body.preview
+    };
+
+    writeFileSync(DATA_FILE, JSON.stringify(data, null, 2));
+    res.json({ message: '文件信息更新成功', file: data[fileIndex] });
+  } catch (error) {
+    console.error('更新文件信息失败:', error);
+    res.status(500).json({ error: '更新文件信息失败' });
+  }
+});
+
 // 删除文件
 app.delete('/api/files/:id', (req, res) => {
   try {
