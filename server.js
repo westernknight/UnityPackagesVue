@@ -145,12 +145,21 @@ app.delete('/api/files/:id', (req, res) => {
       
       // 删除预览图文件
       if (fileData.preview) {
-        const previewFilename = fileData.preview.split('/').pop();
-        if (previewFilename) {
-          const previewPath = join(__dirname, 'uploads', previewFilename);
-          if (existsSync(previewPath)) {
-            unlinkSync(previewPath);
+        try {
+          const previewUrl = new URL(fileData.preview, 'http://localhost');
+          const previewFilename = decodeURIComponent(previewUrl.pathname.split('/').pop());
+          if (previewFilename) {
+            const previewPath = join(__dirname, 'uploads', previewFilename);
+            console.log('尝试删除预览图:', previewPath);
+            if (existsSync(previewPath)) {
+              unlinkSync(previewPath);
+              console.log('预览图删除成功');
+            } else {
+              console.log('预览图文件不存在');
+            }
           }
+        } catch (err) {
+          console.error('删除预览图失败:', err);
         }
       }
     } catch (err) {
