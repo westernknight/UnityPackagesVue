@@ -114,12 +114,26 @@
 </template>
 
 <script setup>
-import { ref, nextTick } from 'vue'
+import { ref, nextTick, onMounted } from 'vue'
 import { UploadFilled, Plus } from '@element-plus/icons-vue'
 import { ElMessage } from 'element-plus'
 
 // 文件列表数据
 const packageList = ref([])
+
+// 获取文件列表
+const fetchPackageList = async () => {
+  try {
+    const response = await fetch('/api/files')
+    const data = await response.json()
+    packageList.value = data
+  } catch (error) {
+    ElMessage.error('获取文件列表失败')
+  }
+}
+
+// 在组件挂载时获取文件列表
+onMounted(fetchPackageList)
 
 // 编辑表单数据
 const dialogVisible = ref(false)
@@ -139,7 +153,7 @@ const InputRef = ref()
 // 上传相关处理函数
 const handleUploadSuccess = (response) => {
   ElMessage.success('上传成功')
-  // TODO: 刷新文件列表
+  fetchPackageList() // 上传成功后刷新列表
 }
 
 const handleUploadError = () => {
