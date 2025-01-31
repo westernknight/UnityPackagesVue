@@ -64,7 +64,8 @@ app.post('/api/upload', upload.single('file'), (req, res) => {
       path: req.file.path,
       uploadTime: new Date().toISOString(),
       description: req.body.description || '',
-      tags: req.body.tags || []
+      tags: req.body.tags || [],
+      preview: req.body.preview || ''
     };
 
     // 读取现有数据
