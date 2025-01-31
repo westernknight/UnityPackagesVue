@@ -53,6 +53,13 @@
 
     <!-- 标签选择区域 -->
     <div class="tags-container">
+      <h3>描述</h3>
+      <el-input
+        v-model="packageDescription"
+        type="textarea"
+        :rows="3"
+        placeholder="请输入UnityPackage的描述信息"
+      />
       <h3>选择标签（必选）</h3>
       <div class="tags-list">
         <el-checkbox-group v-model="selectedTags">
@@ -264,6 +271,7 @@ const handleUpload = async () => {
     packageFormData.append('file', packageFile.value.raw)
     packageFormData.append('preview', previewData.url) // 添加预览图URL
     packageFormData.append('tags', selectedTags.value) // 添加标签
+    packageFormData.append('description', packageDescription.value) // 添加描述
 
     const packageResponse = await fetch('/api/upload', {
       method: 'POST',
@@ -281,6 +289,7 @@ const handleUpload = async () => {
     packageFile.value = null
     previewFile.value = null
     selectedTags.value = []
+    packageDescription.value = ''
     canUpload.value = false
     packageUploadRef.value.clearFiles()
     previewUploadRef.value.clearFiles()
