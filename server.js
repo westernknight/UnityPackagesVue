@@ -3,7 +3,7 @@ import multer from 'multer';
 import { fileURLToPath } from 'url';
 import { dirname, join } from 'path';
 import cors from 'cors';
-import { mkdirSync, readFileSync, writeFileSync, existsSync } from 'fs';
+import { mkdirSync, readFileSync, writeFileSync, existsSync, unlinkSync } from 'fs';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -91,6 +91,46 @@ app.post('/api/upload/preview', upload.single('file'), (req, res) => {
     message: '预览图上传成功',
     url: `/uploads/${req.file.filename}`
   });
+});
+
+// 删除文件
+app.delete('/api/files/:id', (req, res) => {
+  try {
+    const fileId = parseInt(req.params.id);
+    const data = JSON.parse(readFileSync(DATA_FILE, 'utf8'));
+    const fileIndex = data.findIndex(item => item.id === fileId);
+
+    if (fileIndex === -1) {
+      return res.status(404).json({ error: '文件不存在' });
+    }
+
+    const fileData = data[fileIndex];
+
+    // 删除实际文件
+    try {
+      const filePath = join(__dirname, fileData.path);
+      const previewPath = join(__dirname, 'uploads', fileData.preview?.split('/').pop() || '');
+      
+      if (existsSync(filePath)) {
+        unlinkSync(filePath);
+      }
+      
+      if (fileData.preview && existsSync(previewPath)) {
+        unlinkSync(previewPath);
+      }
+    } catch (err) {
+      console.error('删除文件失败:', err);
+    }
+
+    // 从数据中移除
+    data.splice(fileIndex, 1);
+    writeFileSync(DATA_FILE, JSON.stringify(data, null, 2));
+
+    res.json({ message: '文件删除成功' });
+  } catch (error) {
+    console.error('删除文件失败:', error);
+    res.status(500).json({ error: '删除文件失败' });
+  }
 });
 
 // 提供静态文件访问

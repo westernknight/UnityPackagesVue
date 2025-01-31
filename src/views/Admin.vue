@@ -116,7 +116,7 @@
 <script setup>
 import { ref, nextTick, onMounted } from 'vue'
 import { UploadFilled, Plus } from '@element-plus/icons-vue'
-import { ElMessage } from 'element-plus'
+import { ElMessage, ElMessageBox } from 'element-plus'
 
 // 文件列表数据
 const packageList = ref([])
@@ -189,7 +189,28 @@ const handleEdit = (row) => {
 }
 
 const handleDelete = (row) => {
-  // TODO: 实现删除功能
+  ElMessageBox.confirm('确定要删除这个文件吗？', '警告', {
+    confirmButtonText: '确定',
+    cancelButtonText: '取消',
+    type: 'warning',
+  })
+  .then(async () => {
+    try {
+      const response = await fetch(`/api/files/${row.id}`, {
+        method: 'DELETE',
+      });
+      if (!response.ok) {
+        throw new Error('删除失败');
+      }
+      ElMessage.success('删除成功');
+      fetchPackageList(); // 刷新列表
+    } catch (error) {
+      ElMessage.error('删除失败：' + error.message);
+    }
+  })
+  .catch(() => {
+    ElMessage.info('已取消删除');
+  });
 }
 
 const handleSave = () => {
