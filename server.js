@@ -139,14 +139,19 @@ app.delete('/api/files/:id', (req, res) => {
     // 删除实际文件
     try {
       const filePath = join(__dirname, fileData.path);
-      const previewPath = join(__dirname, 'uploads', fileData.preview?.split('/').pop() || '');
-      
       if (existsSync(filePath)) {
         unlinkSync(filePath);
       }
       
-      if (fileData.preview && existsSync(previewPath)) {
-        unlinkSync(previewPath);
+      // 删除预览图文件
+      if (fileData.preview) {
+        const previewFilename = fileData.preview.split('/').pop();
+        if (previewFilename) {
+          const previewPath = join(__dirname, 'uploads', previewFilename);
+          if (existsSync(previewPath)) {
+            unlinkSync(previewPath);
+          }
+        }
       }
     } catch (err) {
       console.error('删除文件失败:', err);
