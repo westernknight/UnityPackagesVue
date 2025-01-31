@@ -126,7 +126,14 @@
         </el-form-item>
         <el-form-item label="标签">
           <el-checkbox-group v-model="editForm.tags">
-            <el-checkbox v-for="tag in predefinedTags" :key="tag" :label="tag">{{ tag }}</el-checkbox>
+            <el-checkbox 
+              v-for="tag in predefinedTags" 
+              :key="tag" 
+              :label="tag"
+              :value="editForm.tags.includes(tag)"
+            >
+              {{ tag }}
+            </el-checkbox>
           </el-checkbox-group>
         </el-form-item>
       </el-form>
