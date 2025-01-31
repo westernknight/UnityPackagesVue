@@ -64,7 +64,7 @@ app.post('/api/upload', upload.single('file'), (req, res) => {
       path: req.file.path,
       uploadTime: new Date().toISOString(),
       description: req.body.description || '',
-      tags: req.body.tags || [],
+      tags: Array.isArray(req.body.tags) ? req.body.tags : [req.body.tags].filter(Boolean),
       preview: req.body.preview || ''
     };
 
@@ -112,7 +112,7 @@ app.put('/api/files/:id', (req, res) => {
       ...originalFile,
       name: req.body.name,
       description: req.body.description,
-      tags: req.body.tags,
+      tags: Array.isArray(req.body.tags) ? req.body.tags : [req.body.tags].filter(Boolean),
       preview: req.body.preview
     };
 

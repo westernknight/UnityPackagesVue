@@ -126,11 +126,10 @@
         </el-form-item>
         <el-form-item label="标签">
           <el-checkbox-group v-model="editForm.tags">
-            <el-checkbox 
+          <el-checkbox 
               v-for="tag in predefinedTags" 
               :key="tag" 
               :label="tag"
-              :value="editForm.tags.includes(tag)"
             >
               {{ tag }}
             </el-checkbox>
@@ -264,7 +263,7 @@ const handleUpload = async () => {
     const packageFormData = new FormData()
     packageFormData.append('file', packageFile.value.raw)
     packageFormData.append('preview', previewData.url) // 添加预览图URL
-    packageFormData.append('tags', JSON.stringify(selectedTags.value)) // 添加标签
+    packageFormData.append('tags', selectedTags.value) // 添加标签
 
     const packageResponse = await fetch('/api/upload', {
       method: 'POST',
@@ -303,7 +302,7 @@ const handleEdit = (row) => {
     preview: row.preview,
     name: row.name,
     description: row.description,
-    tags: [...row.tags] // 确保创建一个新的数组
+    tags: row.tags // 直接使用数组
   }
   dialogVisible.value = true
 }
