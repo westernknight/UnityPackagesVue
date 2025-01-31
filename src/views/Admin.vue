@@ -51,6 +51,16 @@
       </div>
     </div>
 
+    <!-- 标签选择区域 -->
+    <div class="tags-container">
+      <h3>选择标签（必选）</h3>
+      <div class="tags-list">
+        <el-checkbox-group v-model="selectedTags">
+          <el-checkbox v-for="tag in predefinedTags" :key="tag" :label="tag">{{ tag }}</el-checkbox>
+        </el-checkbox-group>
+      </div>
+    </div>
+
     <div class="upload-actions">
       <el-button type="primary" :disabled="!canUpload" @click="handleUpload">上传文件</el-button>
     </div>
@@ -115,26 +125,9 @@
           <el-input v-model="editForm.description" type="textarea" />
         </el-form-item>
         <el-form-item label="标签">
-          <el-tag
-            v-for="tag in editForm.tags"
-            :key="tag"
-            closable
-            :disable-transitions="false"
-            @close="handleClose(tag)">
-            {{tag}}
-          </el-tag>
-          <el-input
-            v-if="inputVisible"
-            ref="InputRef"
-            v-model="inputValue"
-            class="ml-1 w-20"
-            size="small"
-            @keyup.enter="handleInputConfirm"
-            @blur="handleInputConfirm"
-          />
-          <el-button v-else class="button-new-tag ml-1" size="small" @click="showInput">
-            + 新标签
-          </el-button>
+          <el-checkbox-group v-model="editForm.tags">
+            <el-checkbox v-for="tag in predefinedTags" :key="tag" :label="tag">{{ tag }}</el-checkbox>
+          </el-checkbox-group>
         </el-form-item>
       </el-form>
       <template #footer>
@@ -152,6 +145,9 @@ import { ref, nextTick, onMounted } from 'vue'
 import { UploadFilled, Plus } from '@element-plus/icons-vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 
+// 预设标签
+const predefinedTags = ['模型', '动作', '特效', '场景', '工具', 'shader', 'UI', 'Template']
+
 // 上传组件引用
 const packageUploadRef = ref()
 const previewUploadRef = ref()
@@ -159,6 +155,7 @@ const previewUploadRef = ref()
 // 上传文件状态
 const packageFile = ref(null)
 const previewFile = ref(null)
+const selectedTags = ref([])
 const canUpload = ref(false)
 
 // 文件列表数据
@@ -188,11 +185,6 @@ const editForm = ref({
   tags: []
 })
 
-// 标签输入相关
-const inputVisible = ref(false)
-const inputValue = ref('')
-const InputRef = ref()
-
 // 上传相关处理函数
 const handlePackageChange = (file) => {
   if (file) {
@@ -209,8 +201,16 @@ const handlePreviewChange = (file) => {
 }
 
 const checkUploadStatus = () => {
-  canUpload.value = packageFile.value && previewFile.value
+  canUpload.value = packageFile.value && previewFile.value && selectedTags.value.length > 0
 }
+
+// 监听标签选择变化
+const watchTagsChange = () => {
+  checkUploadStatus()
+}
+
+// 添加标签选择监听
+watch(selectedTags, watchTagsChange)
 
 const beforeUpload = (file) => {
   const isUnityPackage = file.name.endsWith('.unitypackage')
@@ -234,6 +234,11 @@ const handleUpload = async () => {
     return
   }
 
+  if (selectedTags.value.length === 0) {
+    ElMessage.warning('请至少选择一个标签')
+    return
+  }
+
   try {
     // 先上传预览图
     const previewFormData = new FormData()
@@ -252,6 +257,7 @@ const handleUpload = async () => {
     const packageFormData = new FormData()
     packageFormData.append('file', packageFile.value.raw)
     packageFormData.append('preview', previewData.url) // 添加预览图URL
+    packageFormData.append('tags', JSON.stringify(selectedTags.value)) // 添加标签
 
     const packageResponse = await fetch('/api/upload', {
       method: 'POST',
@@ -268,6 +274,7 @@ const handleUpload = async () => {
     // 清空上传状态
     packageFile.value = null
     previewFile.value = null
+    selectedTags.value = []
     canUpload.value = false
     packageUploadRef.value.clearFiles()
     previewUploadRef.value.clearFiles()
@@ -314,6 +321,11 @@ const handleDelete = (row) => {
 }
 
 const handleSave = async () => {
+  if (editForm.value.tags.length === 0) {
+    ElMessage.warning('请至少选择一个标签')
+    return
+  }
+
   try {
     const response = await fetch(`/api/files/${editForm.value.id}`, {
       method: 'PUT',
@@ -331,26 +343,6 @@ const handleSave = async () => {
   } catch (error) {
     ElMessage.error('保存失败：' + error.message);
   }
-}
-
-// 标签相关处理函数
-const handleClose = (tag) => {
-  editForm.value.tags = editForm.value.tags.filter((t) => t !== tag)
-}
-
-const showInput = () => {
-  inputVisible.value = true
-  nextTick(() => {
-    InputRef.value.input.focus()
-  })
-}
-
-const handleInputConfirm = () => {
-  if (inputValue.value) {
-    editForm.value.tags.push(inputValue.value)
-  }
-  inputVisible.value = false
-  inputValue.value = ''
 }
 </script>
 
@@ -377,6 +369,27 @@ const handleInputConfirm = () => {
   margin-bottom: 16px;
   text-align: center;
   color: var(--el-text-color-primary);
+}
+
+.tags-container {
+  margin-bottom: 20px;
+  padding: 20px;
+  border: 1px solid var(--el-border-color);
+  border-radius: 8px;
+}
+
+.tags-container h3 {
+  margin-top: 0;
+  margin-bottom: 16px;
+  text-align: center;
+  color: var(--el-text-color-primary);
+}
+
+.tags-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  justify-content: center;
 }
 
 .upload-actions {
