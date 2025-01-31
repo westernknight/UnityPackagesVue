@@ -282,14 +282,6 @@ const handlePreviewSuccess = (response) => {
   ElMessage.success('预览图上传成功')
 }
 
-const beforePreviewUpload = (file) => {
-  const isImage = file.type.startsWith('image/')
-  if (!isImage) {
-    ElMessage.error('只能上传图片文件')
-  }
-  return isImage
-}
-
 // 编辑相关处理函数
 const handleEdit = (row) => {
   editForm.value = { ...row }
