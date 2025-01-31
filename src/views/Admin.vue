@@ -158,6 +158,9 @@ import { ref, nextTick, onMounted, watch } from 'vue'
 import { UploadFilled, Plus } from '@element-plus/icons-vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 
+// 描述输入
+const packageDescription = ref('')
+
 // 预设标签
 const predefinedTags = ['模型', '动作', '特效', '场景', '工具', 'shader', 'UI', 'Template']
 
