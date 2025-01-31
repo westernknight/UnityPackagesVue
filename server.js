@@ -60,6 +60,7 @@ app.post('/api/upload', upload.single('file'), (req, res) => {
       id: Date.now(),
       filename: req.file.filename,
       originalName: req.file.originalname,
+      name: req.file.originalname,
       path: req.file.path,
       uploadTime: new Date().toISOString(),
       description: req.body.description || '',
