@@ -291,7 +291,13 @@ const handlePreviewSuccess = (response) => {
 
 // 编辑相关处理函数
 const handleEdit = (row) => {
-  editForm.value = { ...row }
+  editForm.value = {
+    id: row.id,
+    preview: row.preview,
+    name: row.name,
+    description: row.description,
+    tags: [...row.tags] // 确保创建一个新的数组
+  }
   dialogVisible.value = true
 }
 

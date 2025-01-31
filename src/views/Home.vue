@@ -87,7 +87,9 @@ const selectedTag = ref('')
 const uniqueTags = computed(() => {
   const tags = new Set()
   resources.value.forEach(resource => {
-    resource.tags.forEach(tag => tags.add(tag))
+    if (Array.isArray(resource.tags)) {
+      resource.tags.forEach(tag => tags.add(tag))
+    }
   })
   return Array.from(tags)
 })
