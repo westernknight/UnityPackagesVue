@@ -1,39 +1,41 @@
 <template>
   <div class="home">
-    <!-- 搜索区域 -->
-    <div class="search-container">
-      <el-input
-        v-model="searchQuery"
-        placeholder="搜索资源..."
-        prefix-icon="Search"
-        clearable
-        @input="handleSearch"
-      />
-    </div>
-
-    <!-- 主要内容区域 -->
-    <div class="main-content">
-      <!-- 标签侧边栏 -->
-      <div class="tags-sidebar">
-        <h3>标签分类</h3>
-        <div class="tag-list">
+    <!-- 顶部导航和搜索区域 -->
+    <div class="top-bar">
+      <!-- 分类导航 -->
+      <div class="category-nav">
+        <el-tag
+          :class="{ active: selectedTag === '' }"
+          @click="selectTag('')"
+        >
+          全部
+        </el-tag>
+        <span class="divider" v-if="uniqueTags.length > 0">/</span>
+        <template v-for="(tag, index) in uniqueTags" :key="tag">
           <el-tag
-            :class="{ active: selectedTag === '' }"
-            @click="selectTag('')"
-          >
-            全部
-          </el-tag>
-          <el-tag
-            v-for="tag in uniqueTags"
-            :key="tag"
             :class="{ active: selectedTag === tag }"
             @click="selectTag(tag)"
           >
             {{ tag }}
           </el-tag>
-        </div>
+          <span class="divider" v-if="index < uniqueTags.length - 1">/</span>
+        </template>
       </div>
 
+      <!-- 搜索区域 -->
+      <div class="search-container">
+        <el-input
+          v-model="searchQuery"
+          placeholder="搜索资源..."
+          prefix-icon="Search"
+          clearable
+          @input="handleSearch"
+        />
+      </div>
+    </div>
+
+    <!-- 主要内容区域 -->
+    <div class="main-content">
       <!-- 资源展示区域 -->
       <div class="resources-grid">
         <el-card
@@ -144,35 +146,41 @@ onMounted(() => {
   height: 100%;
 }
 
-.search-container {
+.top-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
   margin-bottom: 20px;
-  max-width: 600px;
 }
 
-.main-content {
+.search-container {
+  width: 300px;
+}
+
+.category-nav {
   display: flex;
-  gap: 20px;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
 }
 
-.tags-sidebar {
-  width: 200px;
-  flex-shrink: 0;
-}
-
-.tag-list {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-
-.tag-list .el-tag {
+.category-nav .el-tag {
   cursor: pointer;
 }
 
-.tag-list .el-tag.active {
+.category-nav .el-tag.active {
   background-color: #409EFF;
   color: white;
   border-color: #409EFF;
+}
+
+.category-nav .divider {
+  color: #909399;
+  font-size: 14px;
+}
+
+.main-content {
+  width: 100%;
 }
 
 .resources-grid {
