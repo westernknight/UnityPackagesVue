@@ -9,7 +9,7 @@
         <el-upload
           class="upload-demo"
           drag
-          action="${import.meta.env.VITE_API_BASE_URL}/api/upload"
+          :action="`${apiBaseUrl}/api/upload`"
           accept=".unitypackage"
           :auto-upload="false"
           :on-change="handlePackageChange"

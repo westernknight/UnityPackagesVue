@@ -46,7 +46,7 @@
         >
           <div class="resource-preview">
             <el-image
-              :src="`${import.meta.env.VITE_API_BASE_URL}/${item.preview}`"
+              :src="`${apiBaseUrl}/${item.preview}`"
               fit="cover"
             >
               <template #error>
@@ -81,9 +81,9 @@
       <div class="resource-details" v-if="selectedResource">
         <div class="preview-section">
           <el-image
-            :src="`${import.meta.env.VITE_API_BASE_URL}/${selectedResource.preview}`"
+            :src="`${apiBaseUrl}/${selectedResource.preview}`"
             fit="contain"
-            :preview-src-list="[`${import.meta.env.VITE_API_BASE_URL}/${selectedResource.preview}`]"
+            :preview-src-list="[`${apiBaseUrl}/${selectedResource.preview}`]"
             class="detail-preview"
           >
             <template #error>
