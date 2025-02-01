@@ -120,6 +120,7 @@
             action="/api/upload/preview"
             :show-file-list="false"
             :auto-upload="true"
+            accept="image/*"
             :on-success="handlePreviewSuccess"
             :before-upload="beforePreviewUpload">
             <img v-if="editForm.preview" :src="editForm.preview" class="avatar" />
