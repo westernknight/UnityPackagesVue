@@ -9,7 +9,7 @@
         <el-upload
           class="upload-demo"
           drag
-          action="/api/upload"
+          action="${import.meta.env.VITE_API_BASE_URL}/api/upload"
           accept=".unitypackage"
           :auto-upload="false"
           :on-change="handlePackageChange"
@@ -32,7 +32,7 @@
         <el-upload
           class="upload-demo"
           drag
-          action="/api/upload/preview"
+          action="${import.meta.env.VITE_API_BASE_URL}/api/upload/preview"
           accept="image/*"
           :auto-upload="false"
           :on-change="handlePreviewChange"
@@ -185,7 +185,7 @@ const packageList = ref([])
 // 获取文件列表
 const fetchPackageList = async () => {
   try {
-    const response = await fetch('/api/files')
+    const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/files`)
     const data = await response.json()
     packageList.value = data
   } catch (error) {
@@ -269,11 +269,11 @@ const handleUpload = async () => {
     // 先上传UnityPackage文件，获取服务器生成的ID
     const packageFormData = new FormData()
     packageFormData.append('file', packageFile.value.raw)
-    packageFormData.append('tags', JSON.stringify(selectedTags.value)) // 修改：将标签数组转换为JSON字符串
+    packageFormData.append('tags', JSON.stringify(selectedTags.value))
     packageFormData.append('description', packageDescription.value)
-    packageFormData.append('name', packageFile.value.name) // 添加：传递文件名
+    packageFormData.append('name', packageFile.value.name)
 
-    const packageResponse = await fetch('/api/upload', {
+    const packageResponse = await fetch('${import.meta.env.VITE_API_BASE_URL}/api/upload', {
       method: 'POST',
       body: packageFormData
     })
@@ -289,7 +289,7 @@ const handleUpload = async () => {
     const previewFormData = new FormData()
     previewFormData.append('file', previewFile.value.raw)
     previewFormData.append('fileId', fileId)
-    const previewResponse = await fetch('/api/upload/preview', {
+    const previewResponse = await fetch('${import.meta.env.VITE_API_BASE_URL}/api/upload/preview', {
       method: 'POST',
       body: previewFormData
     })
@@ -300,7 +300,7 @@ const handleUpload = async () => {
     }
 
     // 更新包信息
-    const updateResponse = await fetch(`/api/files/${fileId}`, {
+    const updateResponse = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/files/${fileId}`, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
@@ -313,7 +313,7 @@ const handleUpload = async () => {
       })
     })
 
-    if (!updateResponse.ok) { // 修改：检查updateResponse而不是packageResponse
+    if (!updateResponse.ok) {
       throw new Error('更新文件信息失败')
     }
 
@@ -363,7 +363,7 @@ const handleDelete = (row) => {
   })
   .then(async () => {
     try {
-      const response = await fetch(`/api/files/${row.id}`, {
+      const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/files/${row.id}`, {
         method: 'DELETE',
       });
       if (!response.ok) {
@@ -406,7 +406,7 @@ const handleSave = async () => {
     if (editForm.value.newPreviewFile) {
       const previewFormData = new FormData()
       previewFormData.append('file', editForm.value.newPreviewFile)
-      const previewResponse = await fetch('/api/upload/preview', {
+      const previewResponse = await fetch('${import.meta.env.VITE_API_BASE_URL}/api/upload/preview', {
         method: 'POST',
         body: previewFormData
       })
@@ -418,7 +418,7 @@ const handleSave = async () => {
       editForm.value.preview = previewData.url
     }
 
-    const response = await fetch(`/api/files/${editForm.value.id}`, {
+    const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/files/${editForm.value.id}`, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',

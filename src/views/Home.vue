@@ -168,7 +168,7 @@ const showDetails = (item) => {
 const downloadPackage = (item) => {
   if (!item) return
   const link = document.createElement('a')
-  link.href = `/uploads/${item.filename}`
+  link.href = `http://192.168.1.6:3000/uploads/${item.filename}`
   link.download = item.originalName
   document.body.appendChild(link)
   link.click()
@@ -178,7 +178,7 @@ const downloadPackage = (item) => {
 // 获取资源列表
 const fetchResources = async () => {
   try {
-    const response = await fetch('/api/files')
+    const response = await fetch('http://192.168.1.6:3000/api/files')
     if (!response.ok) {
       throw new Error('获取资源列表失败')
     }
