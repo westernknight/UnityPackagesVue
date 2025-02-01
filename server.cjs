@@ -89,26 +89,16 @@ app.post('/api/upload/preview', upload.single('file'), (req, res) => {
   
   try {
     const fileId = req.body.fileId || req.file.filename.split('-')[0];
-    const data = JSON.parse(fs.readFileSync(DATA_FILE, 'utf8'));
-    const fileIndex = data.findIndex(item => item.id === parseInt(fileId));
-
-    if (fileIndex === -1) {
-      if (fs.existsSync(req.file.path)) {
-        fs.unlinkSync(req.file.path);
-      }
-      return res.status(404).json({ error: '未找到对应的文件记录' });
-    }
-
-    if (data[fileIndex].preview && fs.existsSync(data[fileIndex].preview)) {
-      fs.unlinkSync(data[fileIndex].preview);
-    }
-
-    data[fileIndex].preview = req.file.path;
-    fs.writeFileSync(DATA_FILE, JSON.stringify(data, null, 2));
-
+    const newFilename = `${fileId}-${req.file.originalname}`;
+    const oldPath = path.join(__dirname, req.file.path);
+    const newPath = path.join(__dirname, 'uploads', newFilename);
+    
+    // 重命名文件
+    fs.renameSync(oldPath, newPath);
+    
     res.json({
       message: '预览图上传成功',
-      preview: req.file.path
+      url: `/uploads/${newFilename}`
     });
   } catch (error) {
     res.status(500).json({ error: '保存预览图数据失败' });
