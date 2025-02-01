@@ -13,6 +13,7 @@
           accept=".unitypackage"
           :auto-upload="false"
           :limit="1"
+          :on-exceed="handleExceed"
           :on-change="handlePackageChange"
           :before-upload="beforeUpload"
           ref="packageUploadRef">
@@ -37,6 +38,8 @@
           accept="image/*"
           :auto-upload="false"
           :limit="1"
+          :on-exceed="handleExceed"
+          :on-change="handlePreviewChange"
           :before-upload="beforePreviewUpload"
           ref="previewUploadRef">
           <el-icon class="el-icon--upload"><upload-filled /></el-icon>
@@ -188,6 +191,15 @@ const canUpload = ref(false)
 // 文件列表数据
 const packageList = ref([])
 
+// 计算文件的MD5
+const calculateMD5 = async (file) => {
+  const buffer = await file.arrayBuffer()
+  const hashBuffer = await crypto.subtle.digest('SHA-256', buffer)
+  const hashArray = Array.from(new Uint8Array(hashBuffer))
+  const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('')
+  return hashHex
+}
+
 // 获取文件列表
 const fetchPackageList = async () => {
   try {
@@ -284,6 +296,9 @@ const handleUpload = async () => {
     packageFormData.append('tags', JSON.stringify(selectedTags.value))
     packageFormData.append('description', packageDescription.value)
     packageFormData.append('name', packageFile.value.name)
+    const md5 = await calculateMD5(packageFile.value.raw)
+    packageFormData.append('md5', md5)
+
 
     const packageResponse = await fetch(`${apiBaseUrl}/api/upload`, {
       method: 'POST',
