@@ -18,10 +18,9 @@ const storage = multer.diskStorage({
     cb(null, 'uploads/')
   },
   filename: function (req, file, cb) {
-    console.log('req.body.fileId',req.body.fileId);//1
-    // 从请求中获取文件ID，如果没有则生成新的
-    const fileId = req.body.fileId || Date.now();
-    cb(null, fileId + '-' + file.originalname)
+    // 使用临时文件名，在请求处理时再重命名
+    const tempId = Date.now();
+    cb(null, tempId + '-' + file.originalname)
   }
 });
 
@@ -97,18 +96,21 @@ app.post('/api/upload/preview', upload.single('file'), (req, res) => {
     return res.status(400).json({ error: '没有文件上传' });
   }
   
-  console.log('req.body.fileId',req.body.fileId);//2
-  // 从文件名中提取ID
-  const fileId = parseInt(req.file.filename.split('-')[0]);
-  // 使用文件ID作为文件名前缀
-  const newFilename = `${fileId}-${req.file.originalname}`;
   try {
+    const fileId = req.body.fileId || req.file.filename.split('-')[0];
+    const newFilename = `${fileId}-${req.file.originalname}`;
+    const oldPath = join(__dirname, req.file.path);
+    const newPath = join(__dirname, 'uploads', newFilename);
+    
+    // 重命名文件
+    renameSync(oldPath, newPath);
+    
     res.json({
       message: '预览图上传成功',
       url: `/uploads/${newFilename}`
     });
   } catch (error) {
-    console.error('重命名预览图失败:', error);
+    console.error('预览图处理失败:', error);
     res.status(500).json({ error: '预览图处理失败' });
   }
 });
