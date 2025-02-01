@@ -7,7 +7,7 @@ const fs = require('fs');
 const app = express();
 app.use(cors());
 app.use(express.json());
-app.use(express.static(path.join(__dirname, 'dist')));
+app.use(express.static(path.join(process.cwd(), 'dist')));
 
 // 配置文件上传存储
 const storage = multer.diskStorage({
@@ -90,8 +90,8 @@ app.post('/api/upload/preview', upload.single('file'), (req, res) => {
   try {
     const fileId = req.body.fileId || req.file.filename.split('-')[0];
     const newFilename = `${fileId}-${req.file.originalname}`;
-    const oldPath = path.join(__dirname, req.file.path);
-    const newPath = path.join(__dirname, 'uploads', newFilename);
+    const oldPath = path.join(process.cwd(), req.file.path);
+    const newPath = path.join(process.cwd(), 'uploads', newFilename);
     
     // 重命名文件
     fs.renameSync(oldPath, newPath);
