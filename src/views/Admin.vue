@@ -215,6 +215,14 @@ const editForm = ref({
 })
 
 // 上传相关处理函数
+const handleExceed = (files) => {
+  packageUploadRef.value.clearFiles()
+  const file = files[0]
+  packageFile.value = file
+  ElMessage.warning('只能上传1个文件，已自动替换之前的文件')
+  checkUploadStatus()
+}
+
 const handlePackageChange = (file) => {
   if (file) {
     packageFile.value = file
