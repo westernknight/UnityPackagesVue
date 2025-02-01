@@ -290,13 +290,21 @@ const handleUpload = async () => {
   }
 
   try {
+    // 计算并检查MD5
+    const md5 = await calculateMD5(packageFile.value.raw)
+    const checkResponse = await fetch(`${apiBaseUrl}/api/check-md5?md5=${md5}`)
+    const checkData = await checkResponse.json()
+
+    if (!checkResponse.ok) {
+      ElMessage.error(checkData.message || 'MD5检查失败')
+      return
+    }
     // 先上传UnityPackage文件，获取服务器生成的ID
     const packageFormData = new FormData()
     packageFormData.append('file', packageFile.value.raw)
     packageFormData.append('tags', JSON.stringify(selectedTags.value))
     packageFormData.append('description', packageDescription.value)
     packageFormData.append('name', packageFile.value.name)
-    const md5 = await calculateMD5(packageFile.value.raw)
     packageFormData.append('md5', md5)
 
 
