@@ -217,10 +217,19 @@ const editForm = ref({
   tags: []
 })
 
-// 上传相关处理函数
-const handleExceed = (files) => {
+// 上传前验证
+const beforeUpload = (file) => {
+  const isUnityPackage = file.name.endsWith('.unitypackage')
 
-  ElMessage.warning('只能上传1个文件')
+  if (!isUnityPackage) {
+    ElMessage.error('只能上传.unitypackage文件!')
+    return false
+  }
+  return true
+}
+
+const beforePreviewUpload = (file) => {
+  return true
 }
 
 // 计算文件MD5
