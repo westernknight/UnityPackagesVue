@@ -12,6 +12,8 @@
           :action="`${apiBaseUrl}/api/upload`"
           accept=".unitypackage"
           :auto-upload="false"
+          :limit="1"
+          :on-exceed="handleExceed"
           :on-change="handlePackageChange"
           :before-upload="beforeUpload"
           ref="packageUploadRef">
