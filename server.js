@@ -18,6 +18,7 @@ const storage = multer.diskStorage({
     cb(null, 'uploads/')
   },
   filename: function (req, file, cb) {
+    console.log('req.body.fileId',req.body.fileId);//1
     // 从请求中获取文件ID，如果没有则生成新的
     const fileId = req.body.fileId || Date.now();
     cb(null, fileId + '-' + file.originalname)
@@ -95,6 +96,8 @@ app.post('/api/upload/preview', upload.single('file'), (req, res) => {
   if (!req.file) {
     return res.status(400).json({ error: '没有文件上传' });
   }
+  
+  console.log('req.body.fileId',req.body.fileId);//2
   // 从文件名中提取ID
   const fileId = parseInt(req.file.filename.split('-')[0]);
   // 使用文件ID作为文件名前缀
