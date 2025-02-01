@@ -47,7 +47,29 @@ app.get('/api/files', (req, res) => {
   }
 });
 
-// 处理unitypackage文件上传
+// 检查文件MD5是否存在
+app.get('/api/files/check-md5/:md5', (req, res) => {
+  try {
+    const md5 = req.params.md5;
+    const data = JSON.parse(fs.readFileSync(DATA_FILE, 'utf8'));
+    const existingFile = data.find(item => item.md5 === md5);
+
+    if (existingFile) {
+      res.json({
+        exists: true,
+        file: existingFile
+      });
+    } else {
+      res.json({
+        exists: false
+      });
+    }
+  } catch (error) {
+    res.status(500).json({ error: '检查文件MD5失败' });
+  }
+});
+
+// 修改上传接口，保存MD5值
 app.post('/api/upload', upload.single('file'), (req, res) => {
   if (!req.file) {
     return res.status(400).json({ error: '没有文件上传' });
@@ -65,7 +87,8 @@ app.post('/api/upload', upload.single('file'), (req, res) => {
       uploadTime: new Date().toISOString(),
       description: req.body.description || '',
       tags: Array.isArray(req.body.tags) ? req.body.tags : [req.body.tags].filter(Boolean),
-      preview: req.body.preview || ''
+      preview: req.body.preview || '',
+      md5: req.body.md5 // 保存MD5值
     };
 
     const data = JSON.parse(fs.readFileSync(DATA_FILE, 'utf8'));
