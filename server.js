@@ -60,6 +60,8 @@ app.post('/api/upload', upload.single('file'), (req, res) => {
   try {
     // 从文件名中提取ID
     const fileId = parseInt(req.file.filename.split('-')[0]);
+  
+    
     const fileData = {
       id: fileId,
       filename: req.file.filename,
@@ -97,10 +99,7 @@ app.post('/api/upload/preview', upload.single('file'), (req, res) => {
   const fileId = parseInt(req.file.filename.split('-')[0]);
   // 使用文件ID作为文件名前缀
   const newFilename = `${fileId}-${req.file.originalname}`;
-  const oldPath = join(__dirname, req.file.path);
-  const newPath = join(__dirname, 'uploads', newFilename);
   try {
-    renameSync(oldPath, newPath);
     res.json({
       message: '预览图上传成功',
       url: `/uploads/${newFilename}`
@@ -124,7 +123,7 @@ app.put('/api/files/:id', (req, res) => {
 
     // 更新文件信息，保留原始文件路径等信息
     const originalFile = data[fileIndex];
-    
+
     // 如果有新的预览图且与原预览图不同，删除旧的预览图
     if (req.body.preview && req.body.preview !== originalFile.preview) {
       try {
@@ -175,7 +174,7 @@ app.delete('/api/files/:id', (req, res) => {
       if (existsSync(filePath)) {
         unlinkSync(filePath);
       }
-      
+
       // 删除预览图文件
       if (fileData.preview) {
         const previewFilename = fileData.preview.split('/').pop();

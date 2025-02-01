@@ -282,7 +282,7 @@ const handleUpload = async () => {
       throw new Error('文件上传失败')
     }
 
-    const fileId = packageData.id // 使用服务器返回的ID
+    const fileId = packageData.file.id // 使用服务器返回的ID
     
     // 上传预览图
     const previewFormData = new FormData()
