@@ -136,10 +136,19 @@ const fetchResources = async () => {
   }
 }
 
-// 页面加载时获取资源列表
+// 确保在组件实例创建时注册生命周期钩子
+let mounted = false
 onMounted(() => {
+  mounted = true
   fetchResources()
 })
+
+// 确保组件卸载时不会继续更新状态
+const updateResources = (data) => {
+  if (mounted) {
+    resources.value = data
+  }
+}
 </script>
 
 <style scoped>
