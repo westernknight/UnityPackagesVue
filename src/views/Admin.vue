@@ -221,6 +221,11 @@ const handlePreviewChange = (file) => {
   }
 }
 
+// 生成时间戳
+const generateTimestamp = () => {
+  return Date.now()
+}
+
 const checkUploadStatus = () => {
   canUpload.value = packageFile.value && previewFile.value && selectedTags.value.length > 0
 }
@@ -261,9 +266,13 @@ const handleUpload = async () => {
   }
 
   try {
+    // 生成时间戳
+    const timestamp = generateTimestamp()
+    
     // 先上传预览图
     const previewFormData = new FormData()
     previewFormData.append('file', previewFile.value.raw)
+    previewFormData.append('timestamp', timestamp)
     const previewResponse = await fetch('/api/upload/preview', {
       method: 'POST',
       body: previewFormData

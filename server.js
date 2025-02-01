@@ -3,7 +3,7 @@ import multer from 'multer';
 import { fileURLToPath } from 'url';
 import { dirname, join } from 'path';
 import cors from 'cors';
-import { mkdirSync, readFileSync, writeFileSync, existsSync, unlinkSync } from 'fs';
+import { mkdirSync, readFileSync, writeFileSync, existsSync, unlinkSync, renameSync } from 'fs';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -89,10 +89,22 @@ app.post('/api/upload/preview', upload.single('file'), (req, res) => {
   if (!req.file) {
     return res.status(400).json({ error: '没有文件上传' });
   }
-  res.json({
-    message: '预览图上传成功',
-    url: `/uploads/${req.file.filename}`
-  });
+  // 从请求中获取关联的UnityPackage时间戳
+  const timestamp = req.body.timestamp || Date.now();
+  // 重命名文件，使用传入的时间戳
+  const newFilename = `${timestamp}-${req.file.originalname}`;
+  const oldPath = join(__dirname, req.file.path);
+  const newPath = join(__dirname, 'uploads', newFilename);
+  try {
+    renameSync(oldPath, newPath);
+    res.json({
+      message: '预览图上传成功',
+      url: `/uploads/${newFilename}`
+    });
+  } catch (error) {
+    console.error('重命名预览图失败:', error);
+    res.status(500).json({ error: '预览图处理失败' });
+  }
 });
 
 // 更新文件信息
