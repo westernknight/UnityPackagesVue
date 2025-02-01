@@ -108,6 +108,22 @@ app.put('/api/files/:id', (req, res) => {
 
     // 更新文件信息，保留原始文件路径等信息
     const originalFile = data[fileIndex];
+    
+    // 如果有新的预览图且与原预览图不同，删除旧的预览图
+    if (req.body.preview && req.body.preview !== originalFile.preview) {
+      try {
+        const oldPreviewFilename = originalFile.preview.split('/').pop();
+        if (oldPreviewFilename) {
+          const oldPreviewPath = join(__dirname, 'uploads', oldPreviewFilename);
+          if (existsSync(oldPreviewPath)) {
+            unlinkSync(oldPreviewPath);
+          }
+        }
+      } catch (err) {
+        console.error('删除旧预览图失败:', err);
+      }
+    }
+
     data[fileIndex] = {
       ...originalFile,
       name: req.body.name,
