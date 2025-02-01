@@ -119,9 +119,9 @@
             class="avatar-uploader"
             action="/api/upload/preview"
             :show-file-list="false"
-            :auto-upload="true"
+            :auto-upload="false"
             accept="image/*"
-            :on-success="handlePreviewSuccess"
+            :on-change="handleEditPreviewChange"
             :before-upload="beforePreviewUpload">
             <img v-if="editForm.preview" :src="editForm.preview" class="avatar" />
             <el-icon v-else class="avatar-uploader-icon"><plus /></el-icon>
@@ -308,8 +308,12 @@ const handleUpload = async () => {
 
 // 预览图上传相关
 const handlePreviewSuccess = (response) => {
-  editForm.value.preview = response.url
-  ElMessage.success('预览图上传成功')
+  if (response && response.url) {
+    editForm.value.preview = response.url
+    ElMessage.success('预览图上传成功')
+  } else {
+    ElMessage.error('预览图上传失败：未获取到图片URL')
+  }
 }
 
 // 编辑相关处理函数
@@ -349,6 +353,21 @@ const handleDelete = (row) => {
   });
 }
 
+// 编辑对话框中的预览图处理
+const handleEditPreviewChange = (file) => {
+  if (file) {
+    // 使用FileReader创建本地预览
+    const reader = new FileReader()
+    reader.onload = (e) => {
+      editForm.value.preview = e.target.result
+    }
+    reader.readAsDataURL(file.raw)
+    // 保存文件对象以供后续上传
+    editForm.value.newPreviewFile = file.raw
+  }
+}
+
+// 修改handleSave函数
 const handleSave = async () => {
   if (editForm.value.tags.length === 0) {
     ElMessage.warning('请至少选择一个标签')
@@ -356,21 +375,44 @@ const handleSave = async () => {
   }
 
   try {
+    // 如果有新的预览图，先上传
+    if (editForm.value.newPreviewFile) {
+      const previewFormData = new FormData()
+      previewFormData.append('file', editForm.value.newPreviewFile)
+      const previewResponse = await fetch('/api/upload/preview', {
+        method: 'POST',
+        body: previewFormData
+      })
+      const previewData = await previewResponse.json()
+
+      if (!previewResponse.ok) {
+        throw new Error('预览图上传失败')
+      }
+      editForm.value.preview = previewData.url
+    }
+
     const response = await fetch(`/api/files/${editForm.value.id}`, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify(editForm.value),
-    });
+      body: JSON.stringify({
+        id: editForm.value.id,
+        preview: editForm.value.preview,
+        name: editForm.value.name,
+        description: editForm.value.description,
+        tags: editForm.value.tags
+      }),
+    })
+
     if (!response.ok) {
-      throw new Error('保存失败');
+      throw new Error('保存失败')
     }
-    ElMessage.success('保存成功');
-    fetchPackageList(); // 刷新列表
-    dialogVisible.value = false;
+    ElMessage.success('保存成功')
+    fetchPackageList() // 刷新列表
+    dialogVisible.value = false
   } catch (error) {
-    ElMessage.error('保存失败：' + error.message);
+    ElMessage.error('保存失败：' + error.message)
   }
 }
 </script>
