@@ -162,7 +162,7 @@
 import { ref, computed } from 'vue'
 
 // 获取API基础URL
-const apiBaseUrl = computed(() => import.meta.env.VITE_API_BASE_URL || 'http://192.168.1.6:3000')
+const apiBaseUrl = computed(() => import.meta.env.VITE_API_BASE_URL || 'http://127.0.0.1:3000')
 
 import { nextTick, onMounted, watch } from 'vue'
 import { UploadFilled, Plus } from '@element-plus/icons-vue'
@@ -190,6 +190,7 @@ const packageList = ref([])
 // 获取文件列表
 const fetchPackageList = async () => {
   try {
+    
     const response = await fetch(`${apiBaseUrl}/api/files`)
     const data = await response.json()
     packageList.value = data
