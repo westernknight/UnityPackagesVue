@@ -171,7 +171,6 @@ const apiBaseUrl = import.meta.env.VITE_API_BASE_URL || 'http://127.0.0.1:3000'
 import { nextTick, onMounted, watch } from 'vue'
 import { UploadFilled, Plus } from '@element-plus/icons-vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
-import SparkMD5 from 'spark-md5'
 
 // 描述输入
 const packageDescription = ref('')
@@ -217,80 +216,59 @@ const editForm = ref({
   tags: []
 })
 
-// 上传前验证
+// 上传相关处理函数
+const handleExceed = (files) => {
+
+  ElMessage.warning('只能上传1个文件')
+}
+
+const handlePackageChange = (file) => {
+  if (file) {
+    packageFile.value = file
+    checkUploadStatus()
+  }
+}
+
+const handlePreviewChange = (file) => {
+  if (file) {
+    previewFile.value = file
+    checkUploadStatus()
+  }
+}
+
+// 生成时间戳
+const generateTimestamp = () => {
+  return Date.now()
+}
+
+const checkUploadStatus = () => {
+  canUpload.value = packageFile.value && previewFile.value && selectedTags.value.length > 0
+}
+
+// 监听标签选择变化
+const watchTagsChange = () => {
+  checkUploadStatus()
+}
+
+// 添加标签选择监听
+watch(selectedTags, watchTagsChange)
+
 const beforeUpload = (file) => {
   const isUnityPackage = file.name.endsWith('.unitypackage')
-
   if (!isUnityPackage) {
-    ElMessage.error('只能上传.unitypackage文件!')
-    return false
+    ElMessage.error('只能上传.unitypackage文件')
   }
-  return true
+  return false // 阻止自动上传
 }
 
 const beforePreviewUpload = (file) => {
-  return true
-}
-
-// 计算文件MD5
-const calculateFileMD5 = (file) => {
-  return new Promise((resolve, reject) => {
-    const chunkSize = 2097152 // 2MB
-    const chunks = Math.ceil(file.size / chunkSize)
-    const spark = new SparkMD5.ArrayBuffer()
-    const fileReader = new FileReader()
-    let currentChunk = 0
-
-    fileReader.onload = (e) => {
-      spark.append(e.target.result)
-      currentChunk++
-
-      if (currentChunk < chunks) {
-        loadNext()
-      } else {
-        resolve(spark.end())
-      }
-    }
-
-    fileReader.onerror = (e) => {
-      reject(e)
-    }
-
-    function loadNext() {
-      const start = currentChunk * chunkSize
-      const end = start + chunkSize >= file.size ? file.size : start + chunkSize
-      fileReader.readAsArrayBuffer(file.slice(start, end))
-    }
-
-    loadNext()
-  })
-}
-
-// 修改handlePackageChange函数
-const handlePackageChange = async (file) => {
-  if (file) {
-    try {
-      const md5 = await calculateFileMD5(file.raw)
-      // 检查文件MD5是否存在
-      const checkResponse = await fetch(`${apiBaseUrl}/api/files/check-md5/${md5}`)
-      const checkData = await checkResponse.json()
-
-      if (checkData.exists) {
-        ElMessage.error(`文件已存在：${checkData.file.name}（上传时间：${new Date(checkData.file.uploadTime).toLocaleString()}）`)
-        packageUploadRef.value.clearFiles()
-        return
-      }
-
-      packageFile.value = { ...file, md5 }
-      checkUploadStatus()
-    } catch (error) {
-      ElMessage.error('文件校验失败：' + error.message)
-      packageUploadRef.value.clearFiles()
-    }
+  const isImage = file.type.startsWith('image/')
+  if (!isImage) {
+    ElMessage.error('只能上传图片文件')
   }
+  return false // 阻止自动上传
 }
 
-// 修改handleUpload函数中的packageFormData
 const handleUpload = async () => {
   if (!packageFile.value || !previewFile.value) {
     ElMessage.warning('请同时上传UnityPackage文件和预览图')
@@ -306,7 +284,6 @@ const handleUpload = async () => {
     // 先上传UnityPackage文件，获取服务器生成的ID
     const packageFormData = new FormData()
     packageFormData.append('file', packageFile.value.raw)
-    packageFormData.append('md5', packageFile.value.md5) // 添加MD5值
     packageFormData.append('tags', JSON.stringify(selectedTags.value))
     packageFormData.append('description', packageDescription.value)
     packageFormData.append('name', packageFile.value.name)
