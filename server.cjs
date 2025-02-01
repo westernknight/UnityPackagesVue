@@ -98,7 +98,7 @@ app.post('/api/upload/preview', upload.single('file'), (req, res) => {
     
     res.json({
       message: '预览图上传成功',
-      url: `/uploads/${newFilename}`
+      url: `uploads\\${newFilename}`
     });
   } catch (error) {
     res.status(500).json({ error: '保存预览图数据失败' });
