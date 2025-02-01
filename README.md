@@ -65,6 +65,21 @@ npm run build
 node server.js
 ```
 
+## Packaging
+To create a standalone Windows executable:
+
+1. Install pkg globally:
+```bash
+npm install -g pkg
+```
+
+2. Package the server:
+```bash
+pkg server.cjs --targets node18-win-x64 --output dist/server.exe
+```
+
+The executable will be created in the dist/ directory.
+
 ## Contributing
 Pull requests are welcome. Please follow the existing code style.
 
