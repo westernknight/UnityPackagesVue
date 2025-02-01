@@ -13,7 +13,6 @@
           accept=".unitypackage"
           :auto-upload="false"
           :limit="1"
-          :on-exceed="handleExceed"
           :on-change="handlePackageChange"
           :before-upload="beforeUpload"
           ref="packageUploadRef">
@@ -38,8 +37,6 @@
           accept="image/*"
           :auto-upload="false"
           :limit="1"
-          :on-exceed="handleExceed"
-          :on-change="handlePreviewChange"
           :before-upload="beforePreviewUpload"
           ref="previewUploadRef">
           <el-icon class="el-icon--upload"><upload-filled /></el-icon>
