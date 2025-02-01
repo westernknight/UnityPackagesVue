@@ -35,7 +35,8 @@
 ├── index.html         # HTML模板
 ├── package.json       # 项目依赖
 ├── vite.config.js     # Vite配置
-└── server.cjs         # 后端服务器
+├── server.cjs         # 后端服务器
+└── .env               # 环境变量配置文件
 ```
 
 ## 安装
@@ -49,6 +50,13 @@ cd my-vue-app
 2. 安装依赖：
 ```bash
 npm install
+```
+
+3. 配置环境变量：
+   - 在项目根目录创建`.env`文件
+   - 添加以下配置：
+```bash
+VITE_API_BASE_URL=http://localhost:3000  # API服务器地址
 ```
 
 ## 开发
@@ -101,6 +109,7 @@ node server.cjs
 - 上传文件大小可能受到服务器限制
 - 确保uploads目录具有写入权限
 - 建议定期备份data.json文件
+- 根据实际部署环境修改.env中的VITE_API_BASE_URL配置
 
 ## 贡献
 
