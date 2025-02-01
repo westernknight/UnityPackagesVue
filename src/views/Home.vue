@@ -121,6 +121,9 @@
 import { ref, computed, onMounted } from 'vue'
 import { ElMessage } from 'element-plus'
 
+// 获取API基础URL
+const apiBaseUrl = process.env.VITE_API_BASE_URL || 'http://192.168.1.6:3000'
+
 // 状态
 const resources = ref([])
 const searchQuery = ref('')
@@ -168,7 +171,7 @@ const showDetails = (item) => {
 const downloadPackage = (item) => {
   if (!item) return
   const link = document.createElement('a')
-  link.href = `${import.meta.env.VITE_API_BASE_URL}/uploads/${item.filename}`
+  link.href = `${apiBaseUrl}/uploads/${item.filename}`
   link.download = item.originalName
   document.body.appendChild(link)
   link.click()
@@ -178,7 +181,7 @@ const downloadPackage = (item) => {
 // 获取资源列表
 const fetchResources = async () => {
   try {
-    const response = await fetch('http://192.168.1.6:3000/api/files')
+    const response = await fetch(`${apiBaseUrl}/api/files`)
     if (!response.ok) {
       throw new Error('获取资源列表失败')
     }

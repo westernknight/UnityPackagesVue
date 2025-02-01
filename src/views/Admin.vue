@@ -32,7 +32,7 @@
         <el-upload
           class="upload-demo"
           drag
-          action="${import.meta.env.VITE_API_BASE_URL}/api/upload/preview"
+          :action="`${apiBaseUrl}/api/upload/preview`"
           accept="image/*"
           :auto-upload="false"
           :on-change="handlePreviewChange"
@@ -79,7 +79,7 @@
           <template #default="{row}">
             <el-image 
               style="width: 100px; height: 100px"
-              :src="`${import.meta.env.VITE_API_BASE_URL}/${row.preview}`"
+              :src="`${apiBaseUrl}/${row.preview}`"
               fit="cover"
               :preview-src-list="[row.preview]">
               <template #error>
@@ -123,7 +123,7 @@
             accept="image/*"
             :on-change="handleEditPreviewChange"
             :before-upload="beforePreviewUpload">
-            <img v-if="editForm.preview" :src="`${import.meta.env.VITE_API_BASE_URL}/${editForm.preview}`" class="avatar" />
+            <img v-if="editForm.preview" :src="`${apiBaseUrl}/${editForm.preview}`" class="avatar" />
             <el-icon v-else class="avatar-uploader-icon"><plus /></el-icon>
             <template #tip>
               <div class="el-upload__tip">点击图片可更换预览图</div>
@@ -159,7 +159,12 @@
 </template>
 
 <script setup>
-import { ref, nextTick, onMounted, watch } from 'vue'
+import { ref, computed } from 'vue'
+
+// 获取API基础URL
+const apiBaseUrl = process.env.VITE_API_BASE_URL || 'http://192.168.1.6:3000'
+
+import { nextTick, onMounted, watch } from 'vue'
 import { UploadFilled, Plus } from '@element-plus/icons-vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 
@@ -185,7 +190,7 @@ const packageList = ref([])
 // 获取文件列表
 const fetchPackageList = async () => {
   try {
-    const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/files`)
+    const response = await fetch(`${apiBaseUrl}/api/files`)
     const data = await response.json()
     packageList.value = data
   } catch (error) {
@@ -273,7 +278,7 @@ const handleUpload = async () => {
     packageFormData.append('description', packageDescription.value)
     packageFormData.append('name', packageFile.value.name)
 
-    const packageResponse = await fetch('${import.meta.env.VITE_API_BASE_URL}/api/upload', {
+    const packageResponse = await fetch(`${apiBaseUrl}/api/upload`, {
       method: 'POST',
       body: packageFormData
     })
@@ -289,7 +294,7 @@ const handleUpload = async () => {
     const previewFormData = new FormData()
     previewFormData.append('file', previewFile.value.raw)
     previewFormData.append('fileId', fileId)
-    const previewResponse = await fetch('${import.meta.env.VITE_API_BASE_URL}/api/upload/preview', {
+    const previewResponse = await fetch(`${apiBaseUrl}/api/upload/preview`, {
       method: 'POST',
       body: previewFormData
     })
@@ -300,7 +305,7 @@ const handleUpload = async () => {
     }
 
     // 更新包信息
-    const updateResponse = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/files/${fileId}`, {
+    const updateResponse = await fetch(`${apiBaseUrl}/api/files/${fileId}`, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
@@ -363,7 +368,7 @@ const handleDelete = (row) => {
   })
   .then(async () => {
     try {
-      const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/files/${row.id}`, {
+      const response = await fetch(`${apiBaseUrl}/api/files/${row.id}`, {
         method: 'DELETE',
       });
       if (!response.ok) {
@@ -406,7 +411,7 @@ const handleSave = async () => {
     if (editForm.value.newPreviewFile) {
       const previewFormData = new FormData()
       previewFormData.append('file', editForm.value.newPreviewFile)
-      const previewResponse = await fetch('${import.meta.env.VITE_API_BASE_URL}/api/upload/preview', {
+      const previewResponse = await fetch(`${apiBaseUrl}/api/upload/preview`, {
         method: 'POST',
         body: previewFormData
       })
@@ -418,7 +423,7 @@ const handleSave = async () => {
       editForm.value.preview = previewData.url.replace(/\\/g, '/')
     }
 
-    const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/files/${editForm.value.id}`, {
+    const response = await fetch(`${apiBaseUrl}/api/files/${editForm.value.id}`, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
