@@ -48,7 +48,6 @@
             <el-image
               :src="item.preview"
               fit="cover"
-              :preview-src-list="[item.preview]"
             >
               <template #error>
                 <div class="image-slot">暂无预览图</div>
@@ -83,7 +82,7 @@
         <div class="preview-section">
           <el-image
             :src="selectedResource.preview"
-            fit="cover"
+            fit="contain"
             :preview-src-list="[selectedResource.preview]"
             class="detail-preview"
           >
