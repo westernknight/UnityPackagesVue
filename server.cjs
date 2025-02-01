@@ -7,7 +7,7 @@ const fs = require('fs');
 const app = express();
 app.use(cors());
 app.use(express.json());
-app.use(express.static(path.join(process.cwd(), 'dist')));
+app.use('/uploads', express.static(path.join(process.cwd(), 'uploads')));
 
 // 配置文件上传存储
 const storage = multer.diskStorage({
