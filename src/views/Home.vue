@@ -1,5 +1,5 @@
 <template>
-  <div class="home">
+  <div class="home argon-theme">
     <!-- 顶部导航和搜索区域 -->
     <div class="top-bar">
       <!-- 分类导航 -->
@@ -7,6 +7,7 @@
         <el-tag
           :class="{ active: selectedTag === '' }"
           @click="selectTag('')"
+          class="argon-tag"
         >
           全部
         </el-tag>
@@ -15,6 +16,7 @@
           <el-tag
             :class="{ active: selectedTag === tag }"
             @click="selectTag(tag)"
+            class="argon-tag"
           >
             {{ tag }}
           </el-tag>
@@ -29,6 +31,7 @@
           placeholder="搜索资源..."
           prefix-icon="Search"
           clearable
+          class="argon-input"
           @input="handleSearch"
         />
       </div>
@@ -41,7 +44,7 @@
         <el-card
           v-for="item in filteredResources"
           :key="item.id"
-          class="resource-card"
+          class="resource-card argon-card"
           @click="showDetails(item)"
         >
           <div class="resource-preview">
@@ -61,7 +64,7 @@
                 v-for="tag in item.tags"
                 :key="tag"
                 size="small"
-                class="mx-1"
+                class="mx-1 argon-tag-small"
               >
                 {{ tag }}
               </el-tag>
@@ -76,7 +79,7 @@
       v-model="dialogVisible"
       :title="selectedResource?.name"
       width="50%"
-      class="resource-dialog"
+      class="resource-dialog argon-dialog"
     >
       <div class="resource-details" v-if="selectedResource">
         <div class="preview-section">
@@ -99,7 +102,7 @@
             <el-tag
               v-for="tag in selectedResource.tags"
               :key="tag"
-              class="mx-1"
+              class="mx-1 argon-tag-small"
               size="small"
             >
               {{ tag }}
@@ -109,8 +112,8 @@
       </div>
       <template #footer>
         <span class="dialog-footer">
-          <el-button @click="dialogVisible = false">关闭</el-button>
-          <el-button type="primary" @click="downloadPackage(selectedResource)">下载</el-button>
+          <el-button @click="dialogVisible = false" class="argon-button">关闭</el-button>
+          <el-button type="primary" @click="downloadPackage(selectedResource)" class="argon-button-primary">下载</el-button>
         </span>
       </template>
     </el-dialog>
@@ -204,20 +207,32 @@ const updateResources = (data) => {
 </script>
 
 <style scoped>
-.home {
+.argon-theme {
+  background: linear-gradient(150deg, #7795f8 15%, #6772e5 70%, #555abf 94%);
+  min-height: 100vh;
   padding: 20px;
-  height: 100%;
 }
 
 .top-bar {
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  border-radius: 15px;
+  padding: 20px;
   display: flex;
   justify-content: space-between;
   align-items: center;
   margin-bottom: 20px;
+  box-shadow: 0 4px 6px rgba(50, 50, 93, 0.11), 0 1px 3px rgba(0, 0, 0, 0.08);
 }
 
 .search-container {
   width: 300px;
+}
+
+.argon-input :deep(.el-input__wrapper) {
+  background: rgba(255, 255, 255, 0.9);
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(50, 50, 93, 0.15), 0 1px 0 rgba(0, 0, 0, 0.02);
 }
 
 .category-nav {
@@ -227,18 +242,30 @@ const updateResources = (data) => {
   gap: 8px;
 }
 
-.category-nav .el-tag {
+.argon-tag {
+  background: rgba(255, 255, 255, 0.9);
+  border: none;
+  border-radius: 8px;
   cursor: pointer;
+  transition: all 0.2s;
+  box-shadow: 0 1px 3px rgba(50, 50, 93, 0.15);
 }
 
-.category-nav .el-tag.active {
-  background-color: #409EFF;
+.argon-tag.active {
+  background: #5e72e4;
   color: white;
-  border-color: #409EFF;
+  box-shadow: 0 4px 6px rgba(50, 50, 93, 0.11), 0 1px 3px rgba(0, 0, 0, 0.08);
+}
+
+.argon-tag-small {
+  background: rgba(94, 114, 228, 0.1);
+  color: #5e72e4;
+  border: none;
+  border-radius: 6px;
 }
 
 .category-nav .divider {
-  color: #909399;
+  color: rgba(255, 255, 255, 0.8);
   font-size: 14px;
 }
 
@@ -253,18 +280,24 @@ const updateResources = (data) => {
   padding: 20px 0;
 }
 
-.resource-card {
+.argon-card {
+  background: rgba(255, 255, 255, 0.9);
+  border: none;
+  border-radius: 15px;
   cursor: pointer;
-  transition: transform 0.2s;
+  transition: all 0.2s;
+  box-shadow: 0 4px 6px rgba(50, 50, 93, 0.11), 0 1px 3px rgba(0, 0, 0, 0.08);
 }
 
-.resource-card:hover {
+.argon-card:hover {
   transform: translateY(-5px);
+  box-shadow: 0 7px 14px rgba(50, 50, 93, 0.1), 0 3px 6px rgba(0, 0, 0, 0.08);
 }
 
 .resource-preview {
   height: 200px;
   overflow: hidden;
+  border-radius: 10px;
 }
 
 .resource-preview .el-image {
@@ -273,21 +306,30 @@ const updateResources = (data) => {
 }
 
 .resource-info {
-  padding: 12px;
+  padding: 16px;
 }
 
 .resource-info h4 {
-  margin: 0 0 8px 0;
+  margin: 0 0 12px 0;
   font-size: 16px;
+  color: #32325d;
 }
 
 .resource-tags {
   display: flex;
   flex-wrap: wrap;
-  gap: 4px;
+  gap: 6px;
 }
 
-/* 详情对话框样式 */
+.argon-dialog {
+  border-radius: 15px;
+}
+
+.resource-dialog :deep(.el-dialog) {
+  border-radius: 15px;
+  box-shadow: 0 15px 35px rgba(50, 50, 93, 0.1), 0 5px 15px rgba(0, 0, 0, 0.07);
+}
+
 .resource-dialog .resource-details {
   display: flex;
   flex-direction: column;
@@ -298,7 +340,8 @@ const updateResources = (data) => {
   width: 100%;
   max-height: 300px;
   overflow: hidden;
-  border-radius: 4px;
+  border-radius: 10px;
+  box-shadow: 0 4px 6px rgba(50, 50, 93, 0.11), 0 1px 3px rgba(0, 0, 0, 0.08);
 }
 
 .resource-dialog .detail-preview {
@@ -310,12 +353,12 @@ const updateResources = (data) => {
 .resource-dialog .info-section h3 {
   margin: 0 0 12px 0;
   font-size: 16px;
-  color: var(--el-text-color-primary);
+  color: #32325d;
 }
 
 .resource-dialog .description {
   margin: 0 0 20px 0;
-  color: var(--el-text-color-regular);
+  color: #525f7f;
   line-height: 1.6;
 }
 
@@ -331,7 +374,28 @@ const updateResources = (data) => {
   align-items: center;
   width: 100%;
   height: 100%;
-  background: var(--el-fill-color-light);
-  color: var(--el-text-color-secondary);
+  background: rgba(94, 114, 228, 0.05);
+  color: #8898aa;
+}
+
+.argon-button {
+  border-radius: 8px;
+  border: none;
+  box-shadow: 0 4px 6px rgba(50, 50, 93, 0.11), 0 1px 3px rgba(0, 0, 0, 0.08);
+  transition: all 0.2s;
+}
+
+.argon-button-primary {
+  background: #5e72e4;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(50, 50, 93, 0.11), 0 1px 3px rgba(0, 0, 0, 0.08);
+  transition: all 0.2s;
+}
+
+.argon-button-primary:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 7px 14px rgba(50, 50, 93, 0.1), 0 3px 6px rgba(0, 0, 0, 0.08);
 }
 </style>
