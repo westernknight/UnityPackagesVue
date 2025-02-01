@@ -97,8 +97,8 @@ const uniqueTags = computed(() => {
 // 根据搜索和标签筛选资源
 const filteredResources = computed(() => {
   return resources.value.filter(resource => {
-    const matchesSearch = resource.name.toLowerCase().includes(searchQuery.value.toLowerCase())
-    const matchesTag = !selectedTag.value || resource.tags.includes(selectedTag.value)
+    const matchesSearch = !searchQuery.value || (resource.name && resource.name.toLowerCase().includes(searchQuery.value.toLowerCase()))
+    const matchesTag = !selectedTag.value || (resource.tags && resource.tags.includes(selectedTag.value))
     return matchesSearch && matchesTag
   })
 })
