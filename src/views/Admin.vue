@@ -119,10 +119,14 @@
             class="avatar-uploader"
             action="/api/upload/preview"
             :show-file-list="false"
+            :auto-upload="true"
             :on-success="handlePreviewSuccess"
             :before-upload="beforePreviewUpload">
             <img v-if="editForm.preview" :src="editForm.preview" class="avatar" />
             <el-icon v-else class="avatar-uploader-icon"><plus /></el-icon>
+            <template #tip>
+              <div class="el-upload__tip">点击图片可更换预览图</div>
+            </template>
           </el-upload>
         </el-form-item>
         <el-form-item label="名称">
