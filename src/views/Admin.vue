@@ -266,13 +266,28 @@ const handleUpload = async () => {
   }
 
   try {
-    // 生成时间戳
-    const timestamp = generateTimestamp()
+    // 先上传UnityPackage文件，获取服务器生成的ID
+    const packageFormData = new FormData()
+    packageFormData.append('file', packageFile.value.raw)
+    packageFormData.append('tags', selectedTags.value) // 添加标签
+    packageFormData.append('description', packageDescription.value) // 添加描述
+
+    const packageResponse = await fetch('/api/upload', {
+      method: 'POST',
+      body: packageFormData
+    })
+    const packageData = await packageResponse.json()
+
+    if (!packageResponse.ok) {
+      throw new Error('文件上传失败')
+    }
+
+    const fileId = packageData.id // 使用服务器返回的ID
     
-    // 先上传预览图
+    // 上传预览图
     const previewFormData = new FormData()
     previewFormData.append('file', previewFile.value.raw)
-    previewFormData.append('timestamp', timestamp)
+    previewFormData.append('fileId', fileId)
     const previewResponse = await fetch('/api/upload/preview', {
       method: 'POST',
       body: previewFormData
@@ -283,16 +298,15 @@ const handleUpload = async () => {
       throw new Error('预览图上传失败')
     }
 
-    // 上传UnityPackage文件
-    const packageFormData = new FormData()
-    packageFormData.append('file', packageFile.value.raw)
-    packageFormData.append('preview', previewData.url) // 添加预览图URL
-    packageFormData.append('tags', selectedTags.value) // 添加标签
-    packageFormData.append('description', packageDescription.value) // 添加描述
-
-    const packageResponse = await fetch('/api/upload', {
-      method: 'POST',
-      body: packageFormData
+    // 更新包信息
+    const updateResponse = await fetch(`/api/files/${fileId}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        preview: previewData.url
+      })
     })
 
     if (!packageResponse.ok) {

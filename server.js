@@ -18,7 +18,9 @@ const storage = multer.diskStorage({
     cb(null, 'uploads/')
   },
   filename: function (req, file, cb) {
-    cb(null, Date.now() + '-' + file.originalname)
+    // 从请求中获取文件ID，如果没有则生成新的
+    const fileId = req.body.fileId || Date.now();
+    cb(null, fileId + '-' + file.originalname)
   }
 });
 
@@ -56,8 +58,10 @@ app.post('/api/upload', upload.single('file'), (req, res) => {
   }
 
   try {
+    // 从文件名中提取ID
+    const fileId = parseInt(req.file.filename.split('-')[0]);
     const fileData = {
-      id: Date.now(),
+      id: fileId,
       filename: req.file.filename,
       originalName: req.file.originalname,
       name: req.file.originalname,
@@ -89,10 +93,10 @@ app.post('/api/upload/preview', upload.single('file'), (req, res) => {
   if (!req.file) {
     return res.status(400).json({ error: '没有文件上传' });
   }
-  // 从请求中获取关联的UnityPackage时间戳
-  const timestamp = req.body.timestamp || Date.now();
-  // 重命名文件，使用传入的时间戳
-  const newFilename = `${timestamp}-${req.file.originalname}`;
+  // 从文件名中提取ID
+  const fileId = parseInt(req.file.filename.split('-')[0]);
+  // 使用文件ID作为文件名前缀
+  const newFilename = `${fileId}-${req.file.originalname}`;
   const oldPath = join(__dirname, req.file.path);
   const newPath = join(__dirname, 'uploads', newFilename);
   try {
