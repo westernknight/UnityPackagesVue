@@ -42,7 +42,7 @@
           v-for="item in filteredResources"
           :key="item.id"
           class="resource-card"
-          @click="downloadPackage(item)"
+          @click="showDetails(item)"
         >
           <div class="resource-preview">
             <el-image
@@ -71,6 +71,50 @@
         </el-card>
       </div>
     </div>
+
+    <!-- 资源详情对话框 -->
+    <el-dialog
+      v-model="dialogVisible"
+      :title="selectedResource?.name"
+      width="50%"
+      class="resource-dialog"
+    >
+      <div class="resource-details" v-if="selectedResource">
+        <div class="preview-section">
+          <el-image
+            :src="selectedResource.preview"
+            fit="cover"
+            :preview-src-list="[selectedResource.preview]"
+            class="detail-preview"
+          >
+            <template #error>
+              <div class="image-slot">暂无预览图</div>
+            </template>
+          </el-image>
+        </div>
+        <div class="info-section">
+          <h3>描述</h3>
+          <p class="description">{{ selectedResource.description || '暂无描述' }}</p>
+          <h3>标签</h3>
+          <div class="tags-container">
+            <el-tag
+              v-for="tag in selectedResource.tags"
+              :key="tag"
+              class="mx-1"
+              size="small"
+            >
+              {{ tag }}
+            </el-tag>
+          </div>
+        </div>
+      </div>
+      <template #footer>
+        <span class="dialog-footer">
+          <el-button @click="dialogVisible = false">关闭</el-button>
+          <el-button type="primary" @click="downloadPackage(selectedResource)">下载</el-button>
+        </span>
+      </template>
+    </el-dialog>
   </div>
 </template>
 
@@ -82,6 +126,8 @@ import { ElMessage } from 'element-plus'
 const resources = ref([])
 const searchQuery = ref('')
 const selectedTag = ref('')
+const dialogVisible = ref(false)
+const selectedResource = ref(null)
 
 // 获取所有唯一的标签
 const uniqueTags = computed(() => {
@@ -113,8 +159,15 @@ const handleSearch = () => {
   // 搜索逻辑已通过计算属性实现
 }
 
+// 显示资源详情
+const showDetails = (item) => {
+  selectedResource.value = item
+  dialogVisible.value = true
+}
+
 // 下载资源包
 const downloadPackage = (item) => {
+  if (!item) return
   const link = document.createElement('a')
   link.href = `/uploads/${item.filename}`
   link.download = item.originalName
@@ -195,10 +248,10 @@ const updateResources = (data) => {
 }
 
 .resources-grid {
-  flex: 1;
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
   gap: 20px;
+  padding: 20px 0;
 }
 
 .resource-card {
@@ -218,28 +271,68 @@ const updateResources = (data) => {
 .resource-preview .el-image {
   width: 100%;
   height: 100%;
-  object-fit: cover;
+}
+
+.resource-info {
+  padding: 12px;
+}
+
+.resource-info h4 {
+  margin: 0 0 8px 0;
+  font-size: 16px;
+}
+
+.resource-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+/* 详情对话框样式 */
+.resource-dialog .resource-details {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.resource-dialog .preview-section {
+  width: 100%;
+  max-height: 300px;
+  overflow: hidden;
+  border-radius: 4px;
+}
+
+.resource-dialog .detail-preview {
+  width: 100%;
+  height: 300px;
+  object-fit: contain;
+}
+
+.resource-dialog .info-section h3 {
+  margin: 0 0 12px 0;
+  font-size: 16px;
+  color: var(--el-text-color-primary);
+}
+
+.resource-dialog .description {
+  margin: 0 0 20px 0;
+  color: var(--el-text-color-regular);
+  line-height: 1.6;
+}
+
+.resource-dialog .tags-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
 }
 
 .image-slot {
   display: flex;
   justify-content: center;
   align-items: center;
+  width: 100%;
   height: 100%;
-  background-color: #f5f7fa;
-}
-
-.resource-info {
-  padding: 10px;
-}
-
-.resource-info h4 {
-  margin: 0 0 10px 0;
-}
-
-.resource-tags {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 5px;
+  background: var(--el-fill-color-light);
+  color: var(--el-text-color-secondary);
 }
 </style>
