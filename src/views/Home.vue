@@ -122,7 +122,7 @@ import { ref, computed, onMounted } from 'vue'
 import { ElMessage } from 'element-plus'
 
 // 获取API基础URL
-const apiBaseUrl = process.env.VITE_API_BASE_URL || 'http://192.168.1.6:3000'
+const apiBaseUrl = computed(() => import.meta.env.VITE_API_BASE_URL || 'http://192.168.1.6:3000')
 
 // 状态
 const resources = ref([])
