@@ -209,6 +209,6 @@ app.delete('/api/files/:id', (req, res) => {
 app.use('/uploads', express.static('uploads'));
 
 const PORT = 3000;
-app.listen(PORT, () => {
-  console.log(`服务器运行在 http://localhost:${PORT}`);
+app.listen(PORT, '0.0.0.0', () => {
+  console.log(`服务器运行在 http://0.0.0.0:${PORT}`);
 });
