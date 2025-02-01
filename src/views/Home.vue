@@ -46,7 +46,7 @@
         >
           <div class="resource-preview">
             <el-image
-              :src="item.preview"
+              :src="`${import.meta.env.VITE_API_BASE_URL}/${item.preview}`"
               fit="cover"
             >
               <template #error>
@@ -81,9 +81,9 @@
       <div class="resource-details" v-if="selectedResource">
         <div class="preview-section">
           <el-image
-            :src="selectedResource.preview"
+            :src="`${import.meta.env.VITE_API_BASE_URL}/${selectedResource.preview}`"
             fit="contain"
-            :preview-src-list="[selectedResource.preview]"
+            :preview-src-list="[`${import.meta.env.VITE_API_BASE_URL}/${selectedResource.preview}`]"
             class="detail-preview"
           >
             <template #error>
@@ -168,7 +168,7 @@ const showDetails = (item) => {
 const downloadPackage = (item) => {
   if (!item) return
   const link = document.createElement('a')
-  link.href = `http://192.168.1.6:3000/uploads/${item.filename}`
+  link.href = `${import.meta.env.VITE_API_BASE_URL}/uploads/${item.filename}`
   link.download = item.originalName
   document.body.appendChild(link)
   link.click()

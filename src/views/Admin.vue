@@ -79,7 +79,7 @@
           <template #default="{row}">
             <el-image 
               style="width: 100px; height: 100px"
-              :src="row.preview"
+              :src="`${import.meta.env.VITE_API_BASE_URL}/${row.preview}`"
               fit="cover"
               :preview-src-list="[row.preview]">
               <template #error>
@@ -123,7 +123,7 @@
             accept="image/*"
             :on-change="handleEditPreviewChange"
             :before-upload="beforePreviewUpload">
-            <img v-if="editForm.preview" :src="editForm.preview" class="avatar" />
+            <img v-if="editForm.preview" :src="`${import.meta.env.VITE_API_BASE_URL}/${editForm.preview}`" class="avatar" />
             <el-icon v-else class="avatar-uploader-icon"><plus /></el-icon>
             <template #tip>
               <div class="el-upload__tip">点击图片可更换预览图</div>
@@ -306,7 +306,7 @@ const handleUpload = async () => {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        preview: previewData.url,
+        preview: previewData.url.replace(/\\/g, '/'),
         name: packageFile.value.name,
         description: packageDescription.value,
         tags: selectedTags.value
@@ -415,7 +415,7 @@ const handleSave = async () => {
       if (!previewResponse.ok) {
         throw new Error('预览图上传失败')
       }
-      editForm.value.preview = previewData.url
+      editForm.value.preview = previewData.url.replace(/\\/g, '/')
     }
 
     const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/files/${editForm.value.id}`, {
