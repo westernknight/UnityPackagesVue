@@ -269,8 +269,9 @@ const handleUpload = async () => {
     // 先上传UnityPackage文件，获取服务器生成的ID
     const packageFormData = new FormData()
     packageFormData.append('file', packageFile.value.raw)
-    packageFormData.append('tags', selectedTags.value) // 添加标签
-    packageFormData.append('description', packageDescription.value) // 添加描述
+    packageFormData.append('tags', JSON.stringify(selectedTags.value)) // 修改：将标签数组转换为JSON字符串
+    packageFormData.append('description', packageDescription.value)
+    packageFormData.append('name', packageFile.value.name) // 添加：传递文件名
 
     const packageResponse = await fetch('/api/upload', {
       method: 'POST',
@@ -282,7 +283,7 @@ const handleUpload = async () => {
       throw new Error('文件上传失败')
     }
 
-    const fileId = packageData.file.id // 使用服务器返回的ID
+    const fileId = packageData.file.id
     
     // 上传预览图
     const previewFormData = new FormData()
@@ -305,16 +306,19 @@ const handleUpload = async () => {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        preview: previewData.url
+        preview: previewData.url,
+        name: packageFile.value.name,
+        description: packageDescription.value,
+        tags: selectedTags.value
       })
     })
 
-    if (!packageResponse.ok) {
-      throw new Error('文件上传失败')
+    if (!updateResponse.ok) { // 修改：检查updateResponse而不是packageResponse
+      throw new Error('更新文件信息失败')
     }
 
     ElMessage.success('上传成功')
-    fetchPackageList() // 刷新列表
+    fetchPackageList()
 
     // 清空上传状态
     packageFile.value = null
