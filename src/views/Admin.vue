@@ -63,7 +63,7 @@
       <h3>选择标签（必选）</h3>
       <div class="tags-list">
         <el-checkbox-group v-model="selectedTags">
-          <el-checkbox v-for="tag in predefinedTags" :key="tag" :label="tag">{{ tag }}</el-checkbox>
+          <el-checkbox v-for="tag in predefinedTags" :key="tag" :value="tag">{{ tag }}</el-checkbox>
         </el-checkbox-group>
       </div>
     </div>
@@ -141,7 +141,7 @@
           <el-checkbox 
               v-for="tag in predefinedTags" 
               :key="tag" 
-              :label="tag"
+              :value="tag"
             >
               {{ tag }}
             </el-checkbox>
