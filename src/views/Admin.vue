@@ -70,7 +70,7 @@
           <template #default="{ row }">
             <div class="preview-container" style="position: relative;">
               <el-image style="width: 100px; height: 100px" :src="`${apiBaseUrl}/${row.preview}`" fit="cover"
-                :preview-src-list="[row.preview]">
+                :preview-src-list="[`${apiBaseUrl}/${row.preview}`]">
                 <template #error>
                   <div class="image-slot">暂无预览图</div>
                 </template>
