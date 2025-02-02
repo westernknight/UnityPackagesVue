@@ -98,13 +98,12 @@
           </el-image>
         </div>
         <div class="info-section">
-          <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 16px;">
-            <el-rate
-              v-if="selectedResource.stars > 0"
-              v-model="selectedResource.stars"
-              disabled
-            />
-          </div>
+          <el-rate
+            v-if="selectedResource.stars > 0"
+            v-model="selectedResource.stars"
+            disabled
+            style="position: absolute; top: 5px; right: 5px; background-color: rgba(255, 255, 255, 0.8); border-radius: 4px; padding: 2px;"
+          />
           <h3>描述</h3>
           <p class="description" v-html="formatDescription(selectedResource.description)"></p>
           <h3>标签</h3>
