@@ -210,6 +210,7 @@ const updateResources = (data) => {
 .home {
   padding: 20px;
   height: 100%;
+  background-color: var(--el-bg-color);
 }
 
 .top-bar {

@@ -501,6 +501,8 @@ const handleSave = async () => {
 <style scoped>
 .admin {
   padding: 20px;
+  height: 100%;
+  background-color: var(--el-bg-color);
 }
 
 .upload-container {
