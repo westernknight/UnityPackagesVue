@@ -195,11 +195,7 @@ const fetchPackageList = async (page = 1) => {
     }
     hasMore.value = data.length === pageSize;
   } catch (error) {
-<<<<<<< HEAD
-    ElMessage.error('获取文件列表失败');
-=======
     ElMessage.error('获取文件列表失败: ' + error)
->>>>>>> 76c48054a28f6f5029f9938f4403e50b54c7f188
   } finally {
     loading.value = false;
   }
