@@ -215,7 +215,6 @@ const handlePackageChange = (file) => {
 }
 
 const handlePreviewChange = (file) => {
-  previewUploadRef.value.clearFiles();
   if (file && handlePreviewDrop(file)) {
     previewFile.value = file
     checkUploadStatus()
