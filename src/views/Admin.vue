@@ -52,7 +52,15 @@
     </div>
 
     <div class="upload-actions">
-      <el-button type="primary" :disabled="!canUpload" @click="handleUpload">上传文件</el-button>
+      <el-button type="primary" @click="handleUpload">上传文件</el-button>
+    </div>
+
+    <!-- 上传进度遮罩层 -->
+    <div class="upload-overlay" v-if="isUploading">
+      <div class="upload-progress">
+        <el-progress type="circle" :percentage="uploadProgress"></el-progress>
+        <p>{{ uploadStatus }}</p>
+      </div>
     </div>
 
     <!-- 文件列表 -->
@@ -150,7 +158,9 @@ const previewUploadRef = ref()
 const packageFile = ref(null)
 const previewFile = ref(null)
 const selectedTags = ref([])
-const canUpload = ref(false)
+const isUploading = ref(false)
+const uploadProgress = ref(0)
+const uploadStatus = ref('准备上传...')
 
 // 文件列表数据
 const packageList = ref([])
@@ -253,6 +263,10 @@ const handleUpload = async () => {
     return
   }
 
+  isUploading.value = true
+  uploadProgress.value = 0
+  uploadStatus.value = '计算文件特征...'
+
   try {
     // 计算并检查MD5
     const md5 = await calculateMD5(packageFile.value.raw)
@@ -338,9 +352,11 @@ const handleUpload = async () => {
     previewFile.value = null
     selectedTags.value = []
     packageDescription.value = ''
-    canUpload.value = false
     packageUploadRef.value.clearFiles()
     previewUploadRef.value.clearFiles()
+    isUploading.value = false
+    uploadProgress.value = 100
+    uploadStatus.value = '上传完成'
   } catch (error) {
     ElMessage.error(error.message || '上传失败')
   }
@@ -510,6 +526,31 @@ const handleSave = async () => {
 
 .package-list {
   margin-top: 20px;
+}
+
+.upload-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+}
+
+.upload-progress {
+  background-color: white;
+  padding: 30px;
+  border-radius: 8px;
+  text-align: center;
+}
+
+.upload-progress p {
+  margin-top: 15px;
+  color: var(--el-text-color-primary);
 }
 
 .avatar-uploader .avatar {
