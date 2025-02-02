@@ -192,7 +192,7 @@ const fetchPackageList = async (page = 1) => {
     }
     hasMore.value = data.files.length === pageSize
   } catch (error) {
-    ElMessage.error('获取文件列表失败')
+    ElMessage.error('获取文件列表失败: ' + error)
   } finally {
     loading.value = false
   }
@@ -209,7 +209,7 @@ const loadMore = async () => {
 const handleScroll = () => {
   const table = document.querySelector('.el-table__body-wrapper')
   if (!table) return
-  
+
   const { scrollTop, scrollHeight, clientHeight } = table
   // 当滚动到距离底部100px时触发加载
   if (scrollHeight - scrollTop - clientHeight < 100 && !loading.value && hasMore.value) {
