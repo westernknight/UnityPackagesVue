@@ -246,6 +246,12 @@ const formatFileSize = (bytes) => {
   return (bytes / Math.pow(k, i)).toFixed(2) + ' ' + sizes[i];
 }
 
+// 处理描述中的链接
+const formatDescription = (text) => {
+  if (!text) return '暂无描述'
+  return text.replace(/(https?:\/\/[^\s]+)/g, '<a href="$1" target="_blank" rel="noopener noreferrer">$1</a>')
+}
+
 const checkUploadStatus = () => {
   canUpload.value = packageFile.value && previewFile.value && selectedTags.value.length > 0
 }
