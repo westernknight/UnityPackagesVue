@@ -500,7 +500,8 @@ const handleEdit = (row) => {
     preview: row.preview,
     name: row.name,
     description: row.description,
-    tags: row.tags // 直接使用数组
+    tags: row.tags, // 直接使用数组
+    stars: row.stars || 0 // 添加stars字段，如果不存在则默认为0
   }
   dialogVisible.value = true
 }
