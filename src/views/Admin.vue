@@ -178,8 +178,6 @@ const calculateMD5 = async (file) => {
 // 获取文件列表
 const fetchPackageList = async () => {
   try {
-    console.log('fetchPackageList');
-
     const response = await fetch(`${apiBaseUrl}/api/files`)
     const data = await response.json()
     packageList.value = data
