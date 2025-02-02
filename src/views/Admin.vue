@@ -253,6 +253,30 @@ const beforePreviewUpload = (file) => {
   return false // 阻止自动上传
 }
 
+// 处理UnityPackage文件拖拽
+const handlePackageDrop = (e) => {
+  const files = e.dataTransfer.files
+  if (files.length > 0) {
+    const file = files[0]
+    if (!file.name.endsWith('.unitypackage')) {
+      ElMessage.error('只能上传.unitypackage文件')
+      return false
+    }
+  }
+}
+
+// 处理预览图拖拽
+const handlePreviewDrop = (e) => {
+  const files = e.dataTransfer.files
+  if (files.length > 0) {
+    const file = files[0]
+    if (!file.type.startsWith('image/')) {
+      ElMessage.error('只能上传图片文件')
+      return false
+    }
+  }
+}
+
 const handleUpload = async () => {
   if (!packageFile.value || !previewFile.value) {
     ElMessage.warning('请同时上传UnityPackage文件和预览图')
