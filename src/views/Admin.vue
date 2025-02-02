@@ -148,7 +148,7 @@ import { ElMessage, ElMessageBox } from 'element-plus'
 const packageDescription = ref('')
 
 // 预设标签
-const predefinedTags = ['模型', '动作', '特效', '场景', '工具', '物理', '文字','声音', 'POLYGON', 'shader', 'AI', 'UI', 'Template']
+const predefinedTags = ['模型', '动作', '特效', '场景', '工具', '物理', '文字', '声音', 'POLYGON', 'shader', 'AI', 'UI', 'Template']
 
 // 上传组件引用
 const packageUploadRef = ref()
@@ -218,7 +218,7 @@ const handlePreviewChange = (file) => {
   if (file && handlePreviewDrop(file)) {
     previewFile.value = file
     checkUploadStatus()
-  }else{
+  } else {
     previewUploadRef.value.clearFiles();
   }
 }
