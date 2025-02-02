@@ -182,21 +182,24 @@ const hasMore = ref(true)
 // 获取文件列表
 const fetchPackageList = async (page = 1) => {
   try {
-    loading.value = true
-    const response = await fetch(`${apiBaseUrl}/api/files?page=${page}&pageSize=${pageSize}`)
-    const data = await response.json()
-    if (page === 1) {
-      packageList.value = data.files
-    } else {
-      packageList.value = [...packageList.value, ...data.files]
+    loading.value = true;
+    const response = await fetch(`${apiBaseUrl}/api/files`);
+    if (!response.ok) {
+      throw new Error('获取文件列表失败');
     }
-    hasMore.value = data.files.length === pageSize
+    const data = await response.json();
+    if (page === 1) {
+      packageList.value = data;
+    } else {
+      packageList.value = [...packageList.value, ...data];
+    }
+    hasMore.value = data.length === pageSize;
   } catch (error) {
-    ElMessage.error('获取文件列表失败')
+    ElMessage.error('获取文件列表失败');
   } finally {
-    loading.value = false
+    loading.value = false;
   }
-}
+};
 
 // 加载更多数据
 const loadMore = async () => {
