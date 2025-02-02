@@ -68,12 +68,20 @@
       <el-table :data="packageList" style="width: 100%" :default-sort="{ prop: 'uploadTime', order: 'descending' }" v-loading="loading">
         <el-table-column prop="preview" label="预览图" width="180">
           <template #default="{ row }">
-            <el-image style="width: 100px; height: 100px" :src="`${apiBaseUrl}/${row.preview}`" fit="cover"
-              :preview-src-list="[row.preview]">
-              <template #error>
-                <div class="image-slot">暂无预览图</div>
-              </template>
-            </el-image>
+            <div class="preview-container" style="position: relative;">
+              <el-image style="width: 100px; height: 100px" :src="`${apiBaseUrl}/${row.preview}`" fit="cover"
+                :preview-src-list="[row.preview]">
+                <template #error>
+                  <div class="image-slot">暂无预览图</div>
+                </template>
+              </el-image>
+              <el-rate
+                v-if="row.stars > 0"
+                v-model="row.stars"
+                disabled
+                style="position: absolute; top: 5px; right: 5px; background-color: rgba(255, 255, 255, 0.8); border-radius: 4px; padding: 2px;"
+              />
+            </div>
           </template>
         </el-table-column>
         <el-table-column prop="name" label="名称" width="180" sortable />
