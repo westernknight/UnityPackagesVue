@@ -77,7 +77,11 @@
           </template>
         </el-table-column>
         <el-table-column prop="name" label="名称" width="180" sortable />
-        <el-table-column prop="description" label="描述" />
+        <el-table-column prop="description" label="描述">
+          <template #default="{ row }">
+            <span v-html="formatDescription(row.description)"></span>
+          </template>
+        </el-table-column>
         <el-table-column prop="uploadTime" label="上传时间" width="180" sortable />
         <el-table-column prop="size" label="文件大小" width="120">
           <template #default="{ row }">

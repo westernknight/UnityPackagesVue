@@ -93,7 +93,7 @@
         </div>
         <div class="info-section">
           <h3>描述</h3>
-          <p class="description">{{ selectedResource.description || '暂无描述' }}</p>
+          <p class="description" v-html="formatDescription(selectedResource.description)"></p>
           <h3>标签</h3>
           <div class="tags-container">
             <el-tag
@@ -164,6 +164,12 @@ const selectTag = (tag) => {
 // 处理搜索
 const handleSearch = () => {
   // 搜索逻辑已通过计算属性实现
+}
+
+// 处理描述中的链接
+const formatDescription = (text) => {
+  if (!text) return '暂无描述'
+  return text.replace(/(https?:\/\/[^\s]+)/g, '<a href="$1" target="_blank" rel="noopener noreferrer">$1</a>')
 }
 
 // 显示资源详情
@@ -363,6 +369,14 @@ const handleDelete = async (item) => {
   margin: 0 0 20px 0;
   color: var(--el-text-color-regular);
   line-height: 1.6;
+  .description a {
+    color: var(--el-color-primary);
+    text-decoration: none;
+  }
+  
+  .description a:hover {
+    text-decoration: underline;
+  }
 }
 
 .resource-dialog .tags-container {
