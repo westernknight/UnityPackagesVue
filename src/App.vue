@@ -15,6 +15,7 @@ import Sidebar from './components/Sidebar.vue'
 .app-container {
   display: flex;
   min-height: 100vh;
+  background-color: var(--el-bg-color);
 }
 
 .main-content {
