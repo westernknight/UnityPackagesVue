@@ -53,6 +53,12 @@
                 <div class="image-slot">暂无预览图</div>
               </template>
             </el-image>
+            <el-rate
+              v-if="item.stars > 0"
+              v-model="item.stars"
+              disabled
+              style="position: absolute; top: 5px; right: 5px; background-color: rgba(255, 255, 255, 0.8); border-radius: 4px; padding: 2px;"
+            />
           </div>
           <div class="resource-info">
             <h4>{{ item.name }}</h4>
