@@ -108,11 +108,13 @@
         </div>
       </div>
       <template #footer>
-        <span class="dialog-footer">
-          <el-button @click="dialogVisible = false">关闭</el-button>
+        <div style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
           <el-button type="danger" @click="handleDelete(selectedResource)">删除</el-button>
-          <el-button type="primary" @click="downloadPackage(selectedResource)">下载</el-button>
-        </span>
+          <span>
+            <el-button @click="dialogVisible = false">关闭</el-button>
+            <el-button type="primary" @click="downloadPackage(selectedResource)">下载</el-button>
+          </span>
+        </div>
       </template>
     </el-dialog>
   </div>
@@ -145,11 +147,13 @@ const uniqueTags = computed(() => {
 
 // 根据搜索和标签筛选资源
 const filteredResources = computed(() => {
-  return resources.value.filter(resource => {
-    const matchesSearch = !searchQuery.value || (resource.name && resource.name.toLowerCase().includes(searchQuery.value.toLowerCase()))
-    const matchesTag = !selectedTag.value || (resource.tags && resource.tags.includes(selectedTag.value))
-    return matchesSearch && matchesTag
-  })
+  return resources.value
+    .filter(resource => {
+      const matchesSearch = !searchQuery.value || (resource.name && resource.name.toLowerCase().includes(searchQuery.value.toLowerCase()))
+      const matchesTag = !selectedTag.value || (resource.tags && resource.tags.includes(selectedTag.value))
+      return matchesSearch && matchesTag
+    })
+    .sort((a, b) => new Date(b.uploadTime) - new Date(a.uploadTime))
 })
 
 // 处理标签选择
