@@ -135,6 +135,9 @@
             </el-checkbox>
           </el-checkbox-group>
         </el-form-item>
+        <el-form-item label="星级">
+          <el-rate v-model="editForm.stars" :max="5" />
+        </el-form-item>
       </el-form>
       <template #footer>
         <span class="dialog-footer">
@@ -243,7 +246,8 @@ const editForm = ref({
   preview: '',
   name: '',
   description: '',
-  tags: []
+  tags: [],
+  stars: 0
 })
 
 // 上传相关处理函数
@@ -566,7 +570,8 @@ const handleSave = async () => {
         preview: editForm.value.preview,
         name: editForm.value.name,
         description: editForm.value.description,
-        tags: editForm.value.tags
+        tags: editForm.value.tags,
+        stars: editForm.value.stars
       }),
     })
 

@@ -102,7 +102,8 @@ app.post('/api/upload', upload.single('file'), (req, res) => {
       tags: Array.isArray(req.body.tags) ? req.body.tags : [req.body.tags].filter(Boolean),
       preview: req.body.preview || '',
       md5: req.body.md5, // 保存MD5值
-      size: parseInt(req.body.size) || 0 // 保存文件大小
+      size: parseInt(req.body.size) || 0, // 保存文件大小
+      stars: Math.min(5, Math.max(0, parseInt(req.body.stars) || 0)) // 添加stars字段，限制在0-5之间
     };
 
     const data = JSON.parse(fs.readFileSync(DATA_FILE, 'utf8'));
@@ -190,7 +191,8 @@ app.put('/api/files/:id', (req, res) => {
     data[fileIndex] = {
       ...data[fileIndex],
       ...req.body,
-      id: fileId // 确保 ID 不被修改
+      id: fileId, // 确保 ID 不被修改
+      stars: Math.min(5, Math.max(0, parseInt(req.body.stars) || data[fileIndex].stars || 0)) // 确保stars值在0-5之间
     };
 
     fs.writeFileSync(DATA_FILE, JSON.stringify(data, null, 2));
