@@ -10,6 +10,16 @@
         >
           最新
         </el-tag>
+        <el-button
+          v-if="!showAll && selectedTag === '' && resources.length > 20"
+          size="small"
+          type="primary"
+          text
+          @click="toggleShowAll"
+          style="margin-left: 8px;"
+        >
+          显示全部
+        </el-button>
         <span class="divider" v-if="uniqueTags.length > 0">/</span>
         <template v-for="(tag, index) in uniqueTags" :key="tag">
           <el-tag
