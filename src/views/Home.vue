@@ -112,7 +112,7 @@
           <el-button type="danger" @click="handleDelete(selectedResource)">删除</el-button>
           <span>
             <el-button @click="dialogVisible = false">关闭</el-button>
-            <el-button type="primary" @click="downloadPackage(selectedResource)">下载</el-button>
+            <el-button type="primary" @click="downloadPackage(selectedResource)">下载 ({{ formatFileSize(selectedResource.size) }})</el-button>
           </span>
         </div>
       </template>
@@ -181,6 +181,15 @@ const downloadPackage = (item) => {
   document.body.appendChild(link)
   link.click()
   document.body.removeChild(link)
+}
+
+// 格式化文件大小
+const formatFileSize = (bytes) => {
+  if (!bytes) return '0 B';
+  const k = 1024;
+  const sizes = ['B', 'KB', 'MB', 'GB'];
+  const i = Math.floor(Math.log(bytes) / Math.log(k));
+  return (bytes / Math.pow(k, i)).toFixed(2) + ' ' + sizes[i];
 }
 
 // 获取资源列表

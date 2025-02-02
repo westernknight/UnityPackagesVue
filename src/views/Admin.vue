@@ -79,6 +79,11 @@
         <el-table-column prop="name" label="名称" width="180" sortable />
         <el-table-column prop="description" label="描述" />
         <el-table-column prop="uploadTime" label="上传时间" width="180" sortable />
+        <el-table-column prop="size" label="文件大小" width="120">
+          <template #default="{ row }">
+            {{ formatFileSize(row.size) }}
+          </template>
+        </el-table-column>
         <el-table-column prop="tags" label="标签" width="180">
           <template #default="{ row }">
             <el-tag v-for="tag in row.tags" :key="tag" class="mx-1" size="small">
@@ -228,6 +233,15 @@ const generateTimestamp = () => {
   return Date.now()
 }
 
+// 格式化文件大小
+const formatFileSize = (bytes) => {
+  if (!bytes) return '0 B';
+  const k = 1024;
+  const sizes = ['B', 'KB', 'MB', 'GB'];
+  const i = Math.floor(Math.log(bytes) / Math.log(k));
+  return (bytes / Math.pow(k, i)).toFixed(2) + ' ' + sizes[i];
+}
+
 const checkUploadStatus = () => {
   canUpload.value = packageFile.value && previewFile.value && selectedTags.value.length > 0
 }
@@ -330,6 +344,7 @@ const handleUpload = async () => {
     packageFormData.append('description', packageDescription.value)
     packageFormData.append('name', packageFile.value.name)
     packageFormData.append('md5', md5)
+    packageFormData.append('size', packageFile.value.raw.size) // 添加文件大小信息
 
     uploadStatus.value = '上传UnityPackage文件...'
     const fileId = await new Promise((resolve, reject) => {
