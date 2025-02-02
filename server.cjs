@@ -88,7 +88,8 @@ app.post('/api/upload', upload.single('file'), (req, res) => {
       description: req.body.description || '',
       tags: Array.isArray(req.body.tags) ? req.body.tags : [req.body.tags].filter(Boolean),
       preview: req.body.preview || '',
-      md5: req.body.md5 // 保存MD5值
+      md5: req.body.md5, // 保存MD5值
+      size: parseInt(req.body.size) || 0 // 保存文件大小
     };
 
     const data = JSON.parse(fs.readFileSync(DATA_FILE, 'utf8'));
