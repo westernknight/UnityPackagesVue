@@ -161,6 +161,7 @@ const selectedTags = ref([])
 const isUploading = ref(false)
 const uploadProgress = ref(0)
 const uploadStatus = ref('准备上传...')
+const canUpload = ref(false)
 
 // 文件列表数据
 const packageList = ref([])
