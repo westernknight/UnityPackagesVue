@@ -253,21 +253,17 @@ const updateResources = (data) => {
 
 .resources-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  grid-template-columns: repeat(4, 280px);
   gap: 20px;
   padding: 20px 0;
   justify-content: start;
-  max-width: 100%;
-  overflow-x: hidden;
 }
 
 .resource-card {
   cursor: pointer;
   transition: transform 0.2s;
-  width: 100%;
-  max-width: 280px;
+  width: 280px;
   height: 360px;
-  margin: 0 auto;
 }
 
 .resource-card:hover {

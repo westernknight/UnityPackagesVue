@@ -503,20 +503,16 @@ const handleSave = async () => {
   padding: 20px;
   height: 100%;
   background-color: var(--el-bg-color);
-  max-width: 100%;
-  overflow-x: hidden;
 }
 
 .upload-container {
   display: flex;
   gap: 20px;
   margin-bottom: 20px;
-  flex-wrap: wrap;
 }
 
 .upload-box {
   flex: 1;
-  min-width: 300px;
   padding: 20px;
   border: 1px solid var(--el-border-color);
   border-radius: 8px;
