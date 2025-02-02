@@ -360,6 +360,7 @@ const handleDelete = async (item) => {
   display: flex;
   flex-wrap: wrap;
   gap: 8px;
+  justify-content: center;
 }
 
 .image-slot {
