@@ -9,6 +9,15 @@
       [data-v-app] {
         background-color: var(--el-bg-color);
       }
+      /* 确保预览弹窗容器不受父元素影响 */
+      body > .el-image-viewer__wrapper {
+        position: fixed !important;
+        z-index: 2147483647 !important;
+      }
+      body > .el-image-viewer__mask {
+        position: fixed !important;
+        z-index: 2147483646 !important;
+      }
     </style>
   </head>
   <body>

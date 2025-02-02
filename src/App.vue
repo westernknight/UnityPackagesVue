@@ -24,8 +24,30 @@ import Sidebar from './components/Sidebar.vue'
 }
 
 /* 确保图片预览弹窗始终显示在最顶层 */
-.el-image-viewer__wrapper {
+:deep(.el-image-viewer__wrapper) {
   position: fixed !important;
   z-index: 99999 !important;
+}
+
+/* 确保图片预览弹窗挂载到正确的DOM层级 */
+:root {
+  --el-popup-parent-overflow-hidden: hidden;
+}
+
+.el-popup-parent--hidden {
+  overflow: var(--el-popup-parent-overflow-hidden);
+}
+
+/* 强制预览弹窗挂载到body */
+:deep(.el-image-viewer__mask),
+:deep(.el-image-viewer__wrapper) {
+  position: fixed !important;
+  top: 0 !important;
+  right: 0 !important;
+  bottom: 0 !important;
+  left: 0 !important;
+  overflow: auto !important;
+  margin: 0 !important;
+  z-index: 2000 !important;
 }
 </style>
