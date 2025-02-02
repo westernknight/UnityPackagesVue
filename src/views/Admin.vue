@@ -8,7 +8,7 @@
         <h3>UnityPackage文件</h3>
         <el-upload class="upload-demo" drag :action="`${apiBaseUrl}/api/upload`" accept=".unitypackage"
           :auto-upload="false" :limit="1" :on-exceed="handleExceed" :on-change="handlePackageChange"
-          :before-upload="beforeUpload" ref="packageUploadRef">
+          :before-upload="beforeUpload" ref="packageUploadRef" @drop="handlePackageDrop">
           <el-icon class="el-icon--upload"><upload-filled /></el-icon>
           <div class="el-upload__text">
             拖拽文件到此处或 <em>点击选择</em>
@@ -25,7 +25,7 @@
         <h3>预览图</h3>
         <el-upload class="upload-demo" drag :action="`${apiBaseUrl}/api/upload/preview`" accept="image/*"
           :auto-upload="false" :limit="1" :on-exceed="handleExceed" :on-change="handlePreviewChange"
-          :before-upload="beforePreviewUpload" ref="previewUploadRef">
+          :before-upload="beforePreviewUpload" ref="previewUploadRef" @drop="handlePreviewDrop">
           <el-icon class="el-icon--upload"><upload-filled /></el-icon>
           <div class="el-upload__text">
             拖拽图片到此处或 <em>点击选择</em>
