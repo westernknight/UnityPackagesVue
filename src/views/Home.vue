@@ -47,7 +47,7 @@
           <div class="resource-preview">
             <el-image
               :src="`${apiBaseUrl}/${item.preview}`"
-              fit="cover"
+              fit="contain"
             >
               <template #error>
                 <div class="image-slot">暂无预览图</div>

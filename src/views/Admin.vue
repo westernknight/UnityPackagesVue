@@ -1,22 +1,14 @@
 <template>
   <div class="admin">
     <h1>UnityPackage管理</h1>
-    
+
     <!-- 文件上传区域 -->
     <div class="upload-container">
       <div class="upload-box">
         <h3>UnityPackage文件</h3>
-        <el-upload
-          class="upload-demo"
-          drag
-          :action="`${apiBaseUrl}/api/upload`"
-          accept=".unitypackage"
-          :auto-upload="false"
-          :limit="1"
-          :on-exceed="handleExceed"
-          :on-change="handlePackageChange"
-          :before-upload="beforeUpload"
-          ref="packageUploadRef">
+        <el-upload class="upload-demo" drag :action="`${apiBaseUrl}/api/upload`" accept=".unitypackage"
+          :auto-upload="false" :limit="1" :on-exceed="handleExceed" :on-change="handlePackageChange"
+          :before-upload="beforeUpload" ref="packageUploadRef">
           <el-icon class="el-icon--upload"><upload-filled /></el-icon>
           <div class="el-upload__text">
             拖拽文件到此处或 <em>点击选择</em>
@@ -31,17 +23,9 @@
 
       <div class="upload-box">
         <h3>预览图</h3>
-        <el-upload
-          class="upload-demo"
-          drag
-          :action="`${apiBaseUrl}/api/upload/preview`"
-          accept="image/*"
-          :auto-upload="false"
-          :limit="1"
-          :on-exceed="handleExceed"
-          :on-change="handlePreviewChange"
-          :before-upload="beforePreviewUpload"
-          ref="previewUploadRef">
+        <el-upload class="upload-demo" drag :action="`${apiBaseUrl}/api/upload/preview`" accept="image/*"
+          :auto-upload="false" :limit="1" :on-exceed="handleExceed" :on-change="handlePreviewChange"
+          :before-upload="beforePreviewUpload" ref="previewUploadRef">
           <el-icon class="el-icon--upload"><upload-filled /></el-icon>
           <div class="el-upload__text">
             拖拽图片到此处或 <em>点击选择</em>
@@ -58,12 +42,7 @@
     <!-- 标签选择区域 -->
     <div class="tags-container">
       <h3>描述</h3>
-      <el-input
-        v-model="packageDescription"
-        type="textarea"
-        :rows="3"
-        placeholder="请输入UnityPackage的描述信息"
-      />
+      <el-input v-model="packageDescription" type="textarea" :rows="3" placeholder="请输入UnityPackage的描述信息" />
       <h3>选择标签（必选）</h3>
       <div class="tags-list">
         <el-checkbox-group v-model="selectedTags">
@@ -80,11 +59,8 @@
     <div class="package-list">
       <el-table :data="packageList" style="width: 100%">
         <el-table-column prop="preview" label="预览图" width="180">
-          <template #default="{row}">
-            <el-image 
-              style="width: 100px; height: 100px"
-              :src="`${apiBaseUrl}/${row.preview}`"
-              fit="cover"
+          <template #default="{ row }">
+            <el-image style="width: 100px; height: 100px" :src="`${apiBaseUrl}/${row.preview}`" fit="cover"
               :preview-src-list="[row.preview]">
               <template #error>
                 <div class="image-slot">暂无预览图</div>
@@ -96,18 +72,14 @@
         <el-table-column prop="description" label="描述" />
         <el-table-column prop="uploadTime" label="上传时间" width="180" sortable />
         <el-table-column prop="tags" label="标签" width="180">
-          <template #default="{row}">
-            <el-tag
-              v-for="tag in row.tags"
-              :key="tag"
-              class="mx-1"
-              size="small">
+          <template #default="{ row }">
+            <el-tag v-for="tag in row.tags" :key="tag" class="mx-1" size="small">
               {{ tag }}
             </el-tag>
           </template>
         </el-table-column>
         <el-table-column label="操作" width="180">
-          <template #default="{row}">
+          <template #default="{ row }">
             <el-button size="small" @click="handleEdit(row)">编辑</el-button>
             <el-button size="small" type="danger" @click="handleDelete(row)">删除</el-button>
           </template>
@@ -119,16 +91,12 @@
     <el-dialog v-model="dialogVisible" title="编辑包信息" width="50%">
       <el-form :model="editForm" label-width="120px">
         <el-form-item label="预览图">
-          <el-upload
-            class="avatar-uploader"
-            action="/api/upload/preview"
-            :show-file-list="false"
-            :auto-upload="false"
-            accept="image/*"
-            :on-change="handleEditPreviewChange"
-            :before-upload="beforePreviewUpload">
+          <el-upload class="avatar-uploader" action="/api/upload/preview" :show-file-list="false" :auto-upload="false"
+            accept="image/*" :on-change="handleEditPreviewChange" :before-upload="beforePreviewUpload">
             <img v-if="editForm.preview" :src="`${apiBaseUrl}/${editForm.preview}`" class="avatar" />
-            <el-icon v-else class="avatar-uploader-icon"><plus /></el-icon>
+            <el-icon v-else class="avatar-uploader-icon">
+              <plus />
+            </el-icon>
             <template #tip>
               <div class="el-upload__tip">点击图片可更换预览图</div>
             </template>
@@ -142,11 +110,7 @@
         </el-form-item>
         <el-form-item label="标签">
           <el-checkbox-group v-model="editForm.tags">
-          <el-checkbox 
-              v-for="tag in predefinedTags" 
-              :key="tag" 
-              :value="tag"
-            >
+            <el-checkbox v-for="tag in predefinedTags" :key="tag" :value="tag">
               {{ tag }}
             </el-checkbox>
           </el-checkbox-group>
@@ -176,7 +140,7 @@ import { ElMessage, ElMessageBox } from 'element-plus'
 const packageDescription = ref('')
 
 // 预设标签
-const predefinedTags = ['模型', '动作', '特效', '场景', '工具', 'shader', 'UI', 'Template']
+const predefinedTags = ['模型', '动作', '特效', '场景', '工具', 'POLYGON', 'shader', 'UI', 'Template']
 
 // 上传组件引用
 const packageUploadRef = ref()
@@ -203,7 +167,7 @@ const calculateMD5 = async (file) => {
 // 获取文件列表
 const fetchPackageList = async () => {
   try {
-    
+
     const response = await fetch(`${apiBaseUrl}/api/files`)
     const data = await response.json()
     packageList.value = data
@@ -333,7 +297,7 @@ const handleUpload = async () => {
     }
 
     const fileId = packageData.file.id
-    
+
     // 上传预览图
     const previewFormData = new FormData()
     previewFormData.append('file', previewFile.value.raw)
@@ -410,23 +374,23 @@ const handleDelete = (row) => {
     cancelButtonText: '取消',
     type: 'warning',
   })
-  .then(async () => {
-    try {
-      const response = await fetch(`${apiBaseUrl}/api/files/${row.id}`, {
-        method: 'DELETE',
-      });
-      if (!response.ok) {
-        throw new Error('删除失败');
+    .then(async () => {
+      try {
+        const response = await fetch(`${apiBaseUrl}/api/files/${row.id}`, {
+          method: 'DELETE',
+        });
+        if (!response.ok) {
+          throw new Error('删除失败');
+        }
+        ElMessage.success('删除成功');
+        fetchPackageList(); // 刷新列表
+      } catch (error) {
+        ElMessage.error('删除失败：' + error.message);
       }
-      ElMessage.success('删除成功');
-      fetchPackageList(); // 刷新列表
-    } catch (error) {
-      ElMessage.error('删除失败：' + error.message);
-    }
-  })
-  .catch(() => {
-    ElMessage.info('已取消删除');
-  });
+    })
+    .catch(() => {
+      ElMessage.info('已取消删除');
+    });
 }
 
 // 编辑对话框中的预览图处理
