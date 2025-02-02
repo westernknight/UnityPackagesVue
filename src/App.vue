@@ -22,4 +22,10 @@ import Sidebar from './components/Sidebar.vue'
   flex: 1;
   padding: 20px;
 }
+
+/* 确保图片预览弹窗始终显示在最顶层 */
+.el-image-viewer__wrapper {
+  position: fixed !important;
+  z-index: 9999 !important;
+}
 </style>
