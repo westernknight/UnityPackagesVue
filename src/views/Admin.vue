@@ -8,7 +8,7 @@
         <h3>UnityPackage文件</h3>
         <el-upload class="upload-demo" drag :action="`${apiBaseUrl}/api/upload`" accept=".unitypackage"
           :auto-upload="false" :limit="1" :on-exceed="handleExceed" :on-change="handlePackageChange"
-          :before-upload="beforeUpload" ref="packageUploadRef" @drop="handlePackageDrop">
+          :before-upload="beforeUpload" ref="packageUploadRef">
           <el-icon class="el-icon--upload"><upload-filled /></el-icon>
           <div class="el-upload__text">
             拖拽文件到此处或 <em>点击选择</em>
@@ -178,6 +178,7 @@ const calculateMD5 = async (file) => {
 // 获取文件列表
 const fetchPackageList = async () => {
   try {
+    console.log('fetchPackageList');
 
     const response = await fetch(`${apiBaseUrl}/api/files`)
     const data = await response.json()
@@ -207,16 +208,21 @@ const handleExceed = (files) => {
 }
 
 const handlePackageChange = (file) => {
-  if (file) {
+  if (file && handlePackageDrop(file)) {
     packageFile.value = file
     checkUploadStatus()
+  } else {
+    packageUploadRef.value.clearFiles();
   }
 }
 
 const handlePreviewChange = (file) => {
-  if (file) {
+  previewUploadRef.value.clearFiles();
+  if (file && handlePreviewDrop(file)) {
     previewFile.value = file
     checkUploadStatus()
+  }else{
+    previewUploadRef.value.clearFiles();
   }
 }
 
@@ -254,27 +260,21 @@ const beforePreviewUpload = (file) => {
 }
 
 // 处理UnityPackage文件拖拽
-const handlePackageDrop = (e) => {
-  const files = e.dataTransfer.files
-  if (files.length > 0) {
-    const file = files[0]
-    if (!file.name.endsWith('.unitypackage')) {
-      ElMessage.error('只能上传.unitypackage文件')
-      return false
-    }
+const handlePackageDrop = (file) => {
+  if (!file.name.endsWith('.unitypackage')) {
+    ElMessage.error('只能上传.unitypackage文件')
+    return false
   }
+  return true
 }
 
 // 处理预览图拖拽
-const handlePreviewDrop = (e) => {
-  const files = e.dataTransfer.files
-  if (files.length > 0) {
-    const file = files[0]
-    if (!file.type.startsWith('image/')) {
-      ElMessage.error('只能上传图片文件')
-      return false
-    }
+const handlePreviewDrop = (file) => {
+  if (!file.type.startsWith('image/')) {
+    ElMessage.error('只能上传图片文件')
+    return false
   }
+  return true
 }
 
 const handleUpload = async () => {
