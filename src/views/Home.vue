@@ -322,7 +322,7 @@ const handleDelete = async (item) => {
 
 .resource-preview {
   height: 240px;
-  overflow: hidden;
+  position: relative;
 }
 
 .resource-preview .el-image {
