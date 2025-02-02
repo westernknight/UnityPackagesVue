@@ -145,6 +145,29 @@ const searchQuery = ref('')
 const selectedTag = ref('')
 const dialogVisible = ref(false)
 const selectedResource = ref(null)
+const showAll = ref(false)
+
+// 根据搜索和标签筛选资源
+const filteredResources = computed(() => {
+  let filtered = resources.value
+    .filter(resource => {
+      const matchesTag = !selectedTag.value || (resource.tags && resource.tags.includes(selectedTag.value))
+      return matchesTag
+    })
+    .sort((a, b) => new Date(b.uploadTime) - new Date(a.uploadTime))
+  
+  if (!showAll.value && selectedTag.value === '') {
+    filtered = filtered.slice(0, 20)
+  }
+  
+  return filtered
+})
+
+// 切换显示全部资源
+const toggleShowAll = () => {
+  showAll.value = true
+  selectedTag.value = ''
+}
 
 // 获取所有唯一的标签
 const uniqueTags = computed(() => {
@@ -155,16 +178,6 @@ const uniqueTags = computed(() => {
     }
   })
   return Array.from(tags)
-})
-
-// 根据搜索和标签筛选资源
-const filteredResources = computed(() => {
-  return resources.value
-    .filter(resource => {
-      const matchesTag = !selectedTag.value || (resource.tags && resource.tags.includes(selectedTag.value))
-      return matchesTag
-    })
-    .sort((a, b) => new Date(b.uploadTime) - new Date(a.uploadTime))
 })
 
 // 处理搜索
