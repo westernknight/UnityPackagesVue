@@ -207,8 +207,14 @@ const fetchPackageList = async (page = 1) => {
 // 加载更多数据
 const loadMore = async () => {
   if (loading.value || !hasMore.value) return
+  // 记录当前滚动位置
+  const scrollPosition = window.scrollY
   currentPage.value++
   await fetchPackageList(currentPage.value)
+  // 恢复滚动位置
+  nextTick(() => {
+    window.scrollTo(0, scrollPosition)
+  })
 }
 
 // 在组件挂载时获取文件列表
