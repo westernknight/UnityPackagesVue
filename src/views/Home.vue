@@ -254,7 +254,8 @@ const updateResources = (data) => {
   grid-template-columns: repeat(4, 280px);
   gap: 20px;
   padding: 20px 0;
-  justify-content: start;
+  justify-content: flex-start;
+  margin-left: 0;
 }
 
 .resource-card {
