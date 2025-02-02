@@ -41,6 +41,9 @@ if (!fs.existsSync(DATA_FILE)) {
 app.get('/api/files', (req, res) => {
   try {
     const data = JSON.parse(fs.readFileSync(DATA_FILE, 'utf8'));
+    // 按上传时间降序排序
+    data.sort((a, b) => new Date(b.uploadTime) - new Date(a.uploadTime));
+    
     const page = req.query.page ? parseInt(req.query.page) : null;
     const pageSize = parseInt(req.query.pageSize) || 20;
 
