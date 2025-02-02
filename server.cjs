@@ -41,7 +41,17 @@ if (!fs.existsSync(DATA_FILE)) {
 app.get('/api/files', (req, res) => {
   try {
     const data = JSON.parse(fs.readFileSync(DATA_FILE, 'utf8'));
-    res.json(data);
+    const page = req.query.page ? parseInt(req.query.page) : null;
+    const pageSize = parseInt(req.query.pageSize) || 20;
+
+    if (page !== null) {
+      const startIndex = (page - 1) * pageSize;
+      const endIndex = startIndex + pageSize;
+      const paginatedData = data.slice(startIndex, endIndex);
+      res.json(paginatedData);
+    } else {
+      res.json(data);
+    }
   } catch (error) {
     res.status(500).json({ error: '读取数据失败' });
   }

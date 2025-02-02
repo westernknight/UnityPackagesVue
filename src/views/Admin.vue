@@ -186,7 +186,7 @@ const hasMore = ref(true)
 const fetchPackageList = async (page = 1) => {
   try {
     loading.value = true;
-    const response = await fetch(`${apiBaseUrl}/api/files`);
+    const response = await fetch(`${apiBaseUrl}/api/files?page=${page}&pageSize=${pageSize}`);
     if (!response.ok) {
       throw new Error('获取文件列表失败');
     }
