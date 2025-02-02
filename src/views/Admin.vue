@@ -149,7 +149,7 @@ import { ref, computed } from 'vue'
 // 获取API基础URL
 const apiBaseUrl = import.meta.env.VITE_API_BASE_URL || 'http://127.0.0.1:3000'
 
-import { nextTick, onMounted, watch } from 'vue'
+import { nextTick, onMounted, onUnmounted, watch } from 'vue'
 import { UploadFilled, Plus } from '@element-plus/icons-vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 
