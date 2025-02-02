@@ -24,17 +24,20 @@
 .nav-item {
   display: block;
   padding: 10px 20px;
-  color: #333;
+  color: var(--el-text-color-regular);
   text-decoration: none;
-  transition: background-color 0.3s;
+  transition: all 0.3s;
+  border-radius: 4px;
+  margin: 0 10px;
 }
 
 .nav-item:hover {
-  background-color: #e0e0e0;
+  background-color: var(--el-color-primary-light-9);
+  color: var(--el-color-primary);
 }
 
 .nav-item.active {
-  background-color: #42b883;
+  background-color: var(--el-color-primary);
   color: white;
 }
 </style>
