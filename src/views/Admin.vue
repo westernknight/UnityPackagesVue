@@ -57,7 +57,7 @@
 
     <!-- 文件列表 -->
     <div class="package-list">
-      <el-table :data="packageList" style="width: 100%">
+      <el-table :data="packageList" style="width: 100%" :default-sort="{ prop: 'uploadTime', order: 'descending' }">
         <el-table-column prop="preview" label="预览图" width="180">
           <template #default="{ row }">
             <el-image style="width: 100px; height: 100px" :src="`${apiBaseUrl}/${row.preview}`" fit="cover"
