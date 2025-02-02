@@ -161,22 +161,30 @@ const uniqueTags = computed(() => {
 const filteredResources = computed(() => {
   return resources.value
     .filter(resource => {
-      const matchesSearch = !searchQuery.value || (resource.name && resource.name.toLowerCase().includes(searchQuery.value.toLowerCase()))
       const matchesTag = !selectedTag.value || (resource.tags && resource.tags.includes(selectedTag.value))
-      return matchesSearch && matchesTag
+      return matchesTag
     })
     .sort((a, b) => new Date(b.uploadTime) - new Date(a.uploadTime))
 })
+
+// 处理搜索
+const handleSearch = async () => {
+  try {
+    const response = await fetch(`${apiBaseUrl}/api/files?search=${encodeURIComponent(searchQuery.value)}`)
+    if (!response.ok) {
+      throw new Error('获取资源列表失败')
+    }
+    resources.value = await response.json()
+  } catch (error) {
+    ElMessage.error(error.message)
+  }
+}
 
 // 处理标签选择
 const selectTag = (tag) => {
   selectedTag.value = tag
 }
 
-// 处理搜索
-const handleSearch = () => {
-  // 搜索逻辑已通过计算属性实现
-}
 
 // 处理描述中的链接
 const formatDescription = (text) => {

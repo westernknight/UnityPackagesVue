@@ -46,14 +46,20 @@ app.get('/api/files', (req, res) => {
     
     const page = req.query.page ? parseInt(req.query.page) : null;
     const pageSize = parseInt(req.query.pageSize) || 20;
+    const searchQuery = req.query.search ? req.query.search.toLowerCase() : '';
+
+    // 根据搜索关键词过滤数据
+    const filteredData = searchQuery
+      ? data.filter(item => item.name.toLowerCase().includes(searchQuery))
+      : data;
 
     if (page !== null) {
       const startIndex = (page - 1) * pageSize;
       const endIndex = startIndex + pageSize;
-      const paginatedData = data.slice(startIndex, endIndex);
+      const paginatedData = filteredData.slice(startIndex, endIndex);
       res.json(paginatedData);
     } else {
-      res.json(data);
+      res.json(filteredData);
     }
   } catch (error) {
     res.status(500).json({ error: '读取数据失败' });

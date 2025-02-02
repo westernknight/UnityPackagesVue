@@ -205,15 +205,24 @@ const hasMore = ref(true)
 
 // 搜索相关
 const searchQuery = ref('')
-const filteredPackageList = computed(() => {
-  return packageList.value.filter(item => {
-    return item.name.toLowerCase().includes(searchQuery.value.toLowerCase())
-  })
-})
+const filteredPackageList = computed(() => packageList.value)
 
 // 处理搜索
-const handleSearch = () => {
-  // 搜索逻辑已通过计算属性实现
+const handleSearch = async () => {
+  try {
+    loading.value = true;
+    const response = await fetch(`${apiBaseUrl}/api/files?page=${currentPage.value}&pageSize=${pageSize}&search=${encodeURIComponent(searchQuery.value)}`);
+    if (!response.ok) {
+      throw new Error('获取文件列表失败');
+    }
+    const data = await response.json();
+    packageList.value = data;
+    hasMore.value = data.length === pageSize;
+  } catch (error) {
+    ElMessage.error(error.message);
+  } finally {
+    loading.value = false;
+  }
 }
 
 // 获取文件列表
