@@ -26,6 +26,6 @@ import Sidebar from './components/Sidebar.vue'
 /* 确保图片预览弹窗始终显示在最顶层 */
 .el-image-viewer__wrapper {
   position: fixed !important;
-  z-index: 9999 !important;
+  z-index: 99999 !important;
 }
 </style>
