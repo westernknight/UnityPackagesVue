@@ -8,7 +8,7 @@
           :class="{ active: selectedTag === '' }"
           @click="selectTag('')"
         >
-          全部
+          最新
         </el-tag>
         <span class="divider" v-if="uniqueTags.length > 0">/</span>
         <template v-for="(tag, index) in uniqueTags" :key="tag">
