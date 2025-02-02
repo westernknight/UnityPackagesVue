@@ -203,6 +203,19 @@ const currentPage = ref(1)
 const loading = ref(false)
 const hasMore = ref(true)
 
+// 搜索相关
+const searchQuery = ref('')
+const filteredPackageList = computed(() => {
+  return packageList.value.filter(item => {
+    return item.name.toLowerCase().includes(searchQuery.value.toLowerCase())
+  })
+})
+
+// 处理搜索
+const handleSearch = () => {
+  // 搜索逻辑已通过计算属性实现
+}
+
 // 获取文件列表
 const fetchPackageList = async (page = 1) => {
   try {
