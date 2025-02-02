@@ -208,9 +208,6 @@ const handleExceed = (files) => {
 
 const handlePackageChange = (file) => {
   if (file) {
-    // 清除之前的文件
-    packageUploadRef.value.clearFiles()
-    // 添加新文件
     packageFile.value = file
     checkUploadStatus()
   }
@@ -218,9 +215,6 @@ const handlePackageChange = (file) => {
 
 const handlePreviewChange = (file) => {
   if (file) {
-    // 清除之前的文件
-    previewUploadRef.value.clearFiles()
-    // 添加新文件
     previewFile.value = file
     checkUploadStatus()
   }
