@@ -290,6 +290,10 @@ const handleUpload = async () => {
           描述：${existingFile.description || '无'}<br>
           标签：${existingFile.tags.join(', ')}`
       });
+      // 重置上传状态
+      isUploading.value = false;
+      uploadProgress.value = 0;
+      uploadStatus.value = '准备上传...';
       return;
     }
 
