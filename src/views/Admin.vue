@@ -25,7 +25,7 @@
         <h3>预览图</h3>
         <el-upload class="upload-demo" drag :action="`${apiBaseUrl}/api/upload/preview`" accept="image/*"
           :auto-upload="false" :limit="1" :on-exceed="handleExceed" :on-change="handlePreviewChange"
-          :before-upload="beforePreviewUpload" ref="previewUploadRef" @drop="handlePreviewDrop">
+          :before-upload="beforePreviewUpload" ref="previewUploadRef">
           <el-icon class="el-icon--upload"><upload-filled /></el-icon>
           <div class="el-upload__text">
             拖拽图片到此处或 <em>点击选择</em>
@@ -267,7 +267,7 @@ const handlePackageDrop = (file) => {
 
 // 处理预览图拖拽
 const handlePreviewDrop = (file) => {
-  if (!file.type.startsWith('image/')) {
+  if (!file.raw.type.startsWith('image/')) {
     ElMessage.error('只能上传图片文件')
     return false
   }
