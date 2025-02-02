@@ -65,7 +65,17 @@
 
     <!-- 文件列表 -->
     <div class="package-list">
-      <el-table :data="packageList" style="width: 100%" :default-sort="{ prop: 'uploadTime', order: 'descending' }" v-loading="loading">
+      <!-- 搜索框 -->
+      <div class="search-container" style="margin-bottom: 20px;">
+        <el-input
+          v-model="searchQuery"
+          placeholder="搜索文件名..."
+          prefix-icon="Search"
+          clearable
+          @input="handleSearch"
+        />
+      </div>
+      <el-table :data="filteredPackageList" style="width: 100%" :default-sort="{ prop: 'uploadTime', order: 'descending' }" v-loading="loading">
         <el-table-column prop="preview" label="预览图" width="180">
           <template #default="{ row }">
             <div class="preview-container" style="position: relative;">
@@ -651,6 +661,9 @@ const handleSave = async () => {
 
 .package-list {
   margin-top: 20px;
+  .search-container {
+    width: 300px;
+  }
 }
 
 .upload-overlay {
