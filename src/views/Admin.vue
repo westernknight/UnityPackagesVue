@@ -65,7 +65,7 @@
 
     <!-- 文件列表 -->
     <div class="package-list">
-      <el-table :data="packageList" style="width: 100%" :default-sort="{ prop: 'uploadTime', order: 'descending' }">
+      <el-table :data="packageList" style="width: 100%" :default-sort="{ prop: 'uploadTime', order: 'descending' }" v-loading="loading">
         <el-table-column prop="preview" label="预览图" width="180">
           <template #default="{ row }">
             <el-image style="width: 100px; height: 100px" :src="`${apiBaseUrl}/${row.preview}`" fit="cover"
@@ -102,6 +102,9 @@
           </template>
         </el-table-column>
       </el-table>
+      <div class="load-more" v-if="hasMore">
+        <el-button :loading="loading" @click="loadMore">加载更多</el-button>
+      </div>
     </div>
 
     <!-- 编辑对话框 -->
@@ -208,33 +211,9 @@ const loadMore = async () => {
   await fetchPackageList(currentPage.value)
 }
 
-// 滚动监听函数
-const handleScroll = () => {
-  const table = document.querySelector('.el-table__body-wrapper')
-  if (!table) return
-
-  const { scrollTop, scrollHeight, clientHeight } = table
-  // 当滚动到距离底部100px时触发加载
-  if (scrollHeight - scrollTop - clientHeight < 100 && !loading.value && hasMore.value) {
-    loadMore()
-  }
-}
-
-// 在组件挂载时获取文件列表和添加滚动监听
+// 在组件挂载时获取文件列表
 onMounted(() => {
   fetchPackageList(1)
-  const table = document.querySelector('.el-table__body-wrapper')
-  if (table) {
-    table.addEventListener('scroll', handleScroll)
-  }
-})
-
-// 在组件卸载时移除滚动监听
-onUnmounted(() => {
-  const table = document.querySelector('.el-table__body-wrapper')
-  if (table) {
-    table.removeEventListener('scroll', handleScroll)
-  }
 })
 
 // 计算文件的MD5
