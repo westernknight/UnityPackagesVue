@@ -255,7 +255,7 @@ const watchTagsChange = () => {
 watch(selectedTags, watchTagsChange)
 
 const beforeUpload = (file) => {
-  const isUnityPackage = file.name.endsWith('.unitypackage')
+  const isUnityPackage = file.name.endsWith('.unitypackage') || file.name.endsWith('.zip')
   if (!isUnityPackage) {
     ElMessage.error('只能上传.unitypackage文件')
   }
@@ -272,7 +272,7 @@ const beforePreviewUpload = (file) => {
 
 // 处理UnityPackage文件拖拽
 const handlePackageDrop = (file) => {
-  if (!file.name.endsWith('.unitypackage')) {
+  if (!(file.name.endsWith('.unitypackage') || file.name.endsWith('.zip'))) {
     ElMessage.error('只能上传.unitypackage文件')
     return false
   }
