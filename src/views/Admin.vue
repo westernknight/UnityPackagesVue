@@ -294,6 +294,11 @@ const handleUpload = async () => {
       isUploading.value = false;
       uploadProgress.value = 0;
       uploadStatus.value = '准备上传...';
+      // 清空上传框
+      packageFile.value = null;
+      previewFile.value = null;
+      packageUploadRef.value.clearFiles();
+      previewUploadRef.value.clearFiles();
       return;
     }
 
