@@ -4,22 +4,22 @@
     <div class="top-bar">
       <!-- 分类导航 -->
       <div class="category-nav">
-        <el-tag
-          :class="{ active: selectedTag === '' }"
-          @click="selectTag('')"
-        >
-          最新
-        </el-tag>
         <el-button
           v-if="!showAll && selectedTag === '' && resources.length > 20"
           size="small"
           type="primary"
           text
           @click="toggleShowAll"
-          style="margin-left: 8px;"
+          style="margin-right: 8px;"
         >
           显示全部
         </el-button>
+        <el-tag
+          :class="{ active: selectedTag === '' }"
+          @click="selectTag('')"
+        >
+          最新
+        </el-tag>
         <span class="divider" v-if="uniqueTags.length > 0">/</span>
         <template v-for="(tag, index) in uniqueTags" :key="tag">
           <el-tag
