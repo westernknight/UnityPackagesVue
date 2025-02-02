@@ -174,6 +174,65 @@ const canUpload = ref(false)
 
 // 文件列表数据
 const packageList = ref([])
+const pageSize = 20
+const currentPage = ref(1)
+const loading = ref(false)
+const hasMore = ref(true)
+
+// 获取文件列表
+const fetchPackageList = async (page = 1) => {
+  try {
+    loading.value = true
+    const response = await fetch(`${apiBaseUrl}/api/files?page=${page}&pageSize=${pageSize}`)
+    const data = await response.json()
+    if (page === 1) {
+      packageList.value = data.files
+    } else {
+      packageList.value = [...packageList.value, ...data.files]
+    }
+    hasMore.value = data.files.length === pageSize
+  } catch (error) {
+    ElMessage.error('获取文件列表失败')
+  } finally {
+    loading.value = false
+  }
+}
+
+// 加载更多数据
+const loadMore = async () => {
+  if (loading.value || !hasMore.value) return
+  currentPage.value++
+  await fetchPackageList(currentPage.value)
+}
+
+// 滚动监听函数
+const handleScroll = () => {
+  const table = document.querySelector('.el-table__body-wrapper')
+  if (!table) return
+  
+  const { scrollTop, scrollHeight, clientHeight } = table
+  // 当滚动到距离底部100px时触发加载
+  if (scrollHeight - scrollTop - clientHeight < 100 && !loading.value && hasMore.value) {
+    loadMore()
+  }
+}
+
+// 在组件挂载时获取文件列表和添加滚动监听
+onMounted(() => {
+  fetchPackageList(1)
+  const table = document.querySelector('.el-table__body-wrapper')
+  if (table) {
+    table.addEventListener('scroll', handleScroll)
+  }
+})
+
+// 在组件卸载时移除滚动监听
+onUnmounted(() => {
+  const table = document.querySelector('.el-table__body-wrapper')
+  if (table) {
+    table.removeEventListener('scroll', handleScroll)
+  }
+})
 
 // 计算文件的MD5
 const calculateMD5 = async (file) => {
@@ -184,16 +243,7 @@ const calculateMD5 = async (file) => {
   return hashHex
 }
 
-// 获取文件列表
-const fetchPackageList = async () => {
-  try {
-    const response = await fetch(`${apiBaseUrl}/api/files`)
-    const data = await response.json()
-    packageList.value = data
-  } catch (error) {
-    ElMessage.error('获取文件列表失败')
-  }
-}
+
 
 // 在组件挂载时获取文件列表
 onMounted(fetchPackageList)
