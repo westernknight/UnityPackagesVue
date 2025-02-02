@@ -110,6 +110,7 @@
       <template #footer>
         <span class="dialog-footer">
           <el-button @click="dialogVisible = false">关闭</el-button>
+          <el-button type="danger" @click="handleDelete(selectedResource)">删除</el-button>
           <el-button type="primary" @click="downloadPackage(selectedResource)">下载</el-button>
         </span>
       </template>
@@ -119,7 +120,7 @@
 
 <script setup>
 import { ref, computed, onMounted } from 'vue'
-import { ElMessage } from 'element-plus'
+import { ElMessage, ElMessageBox } from 'element-plus'
 
 // 获取API基础URL
 const apiBaseUrl = import.meta.env.VITE_API_BASE_URL || 'http://127.0.0.1:3000'
@@ -202,6 +203,30 @@ onMounted(() => {
 const updateResources = (data) => {
   if (mounted) {
     resources.value = data
+  }
+}
+// 处理删除资源
+const handleDelete = async (item) => {
+  if (!item) return
+  try {
+    await ElMessageBox.confirm('确定要删除这个资源吗？', '警告', {
+      confirmButtonText: '确定',
+      cancelButtonText: '取消',
+      type: 'warning'
+    })
+    const response = await fetch(`${apiBaseUrl}/api/files/${item.id}`, {
+      method: 'DELETE'
+    })
+    if (!response.ok) {
+      throw new Error('删除资源失败')
+    }
+    ElMessage.success('删除成功')
+    dialogVisible.value = false
+    fetchResources()
+  } catch (error) {
+    if (error !== 'cancel') {
+      ElMessage.error(error.message || '删除失败')
+    }
   }
 }
 </script>
