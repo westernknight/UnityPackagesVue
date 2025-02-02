@@ -261,7 +261,7 @@ const updateResources = (data) => {
   cursor: pointer;
   transition: transform 0.2s;
   width: 280px;
-  height: 320px;
+  height: 360px;
 }
 
 .resource-card:hover {
