@@ -292,7 +292,8 @@ const handleUpload = async () => {
       });
       return;
     }
-    // 先上传UnityPackage文件，获取服务器生成的ID
+
+    // 使用XMLHttpRequest上传UnityPackage文件
     const packageFormData = new FormData()
     packageFormData.append('file', packageFile.value.raw)
     packageFormData.append('tags', JSON.stringify(selectedTags.value))
@@ -300,23 +301,36 @@ const handleUpload = async () => {
     packageFormData.append('name', packageFile.value.name)
     packageFormData.append('md5', md5)
 
+    uploadStatus.value = '上传UnityPackage文件...'
+    const fileId = await new Promise((resolve, reject) => {
+      const xhr = new XMLHttpRequest()
+      xhr.open('POST', `${apiBaseUrl}/api/upload`, true)
 
-    const packageResponse = await fetch(`${apiBaseUrl}/api/upload`, {
-      method: 'POST',
-      body: packageFormData
+      xhr.upload.onprogress = (event) => {
+        if (event.lengthComputable) {
+          uploadProgress.value = Math.round((event.loaded / event.total) * 100)
+        }
+      }
+
+      xhr.onload = () => {
+        if (xhr.status === 200) {
+          const response = JSON.parse(xhr.responseText)
+          resolve(response.file.id)
+        } else {
+          reject(new Error('文件上传失败'))
+        }
+      }
+
+      xhr.onerror = () => reject(new Error('文件上传失败'))
+      xhr.send(packageFormData)
     })
-    const packageData = await packageResponse.json()
-
-    if (!packageResponse.ok) {
-      throw new Error('文件上传失败')
-    }
-
-    const fileId = packageData.file.id
 
     // 上传预览图
+    uploadStatus.value = '上传预览图...'
     const previewFormData = new FormData()
     previewFormData.append('file', previewFile.value.raw)
     previewFormData.append('fileId', fileId)
+
     const previewResponse = await fetch(`${apiBaseUrl}/api/upload/preview`, {
       method: 'POST',
       body: previewFormData
@@ -360,6 +374,7 @@ const handleUpload = async () => {
     uploadStatus.value = '上传完成'
   } catch (error) {
     ElMessage.error(error.message || '上传失败')
+    isUploading.value = false
   }
 }
 
