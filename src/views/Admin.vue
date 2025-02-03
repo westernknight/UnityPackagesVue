@@ -67,15 +67,10 @@
     <div class="package-list">
       <!-- 搜索框 -->
       <div class="search-container" style="margin-bottom: 20px;">
-        <el-input
-          v-model="searchQuery"
-          placeholder="搜索文件名..."
-          prefix-icon="Search"
-          clearable
-          @input="handleSearch"
-        />
+        <el-input v-model="searchQuery" placeholder="搜索文件名..." prefix-icon="Search" clearable @input="handleSearch" />
       </div>
-      <el-table :data="filteredPackageList" style="width: 100%" :default-sort="{ prop: 'uploadTime', order: 'descending' }" v-loading="loading">
+      <el-table :data="filteredPackageList" style="width: 100%"
+        :default-sort="{ prop: 'uploadTime', order: 'descending' }" v-loading="loading">
         <el-table-column prop="preview" label="预览图" width="180">
           <template #default="{ row }">
             <div class="preview-container" style="position: relative;">
@@ -85,12 +80,8 @@
                   <div class="image-slot">暂无预览图</div>
                 </template>
               </el-image>
-              <el-rate
-                v-if="row.stars > 0"
-                v-model="row.stars"
-                disabled
-                style="position: absolute; top: 5px; right: 5px; background-color: rgba(255, 255, 255, 0.8); border-radius: 4px; padding: 2px;"
-              />
+              <el-rate v-if="row.stars > 0" v-model="row.stars" disabled
+                style="position: absolute; top: 5px; right: 5px; background-color: rgba(255, 255, 255, 0.8); border-radius: 4px; padding: 2px;" />
             </div>
           </template>
         </el-table-column>
@@ -516,7 +507,7 @@ const handleUpload = async () => {
     uploadProgress.value = 100
     uploadStatus.value = '上传完成'
   } catch (error) {
-    ElMessage.error(error.message || '上传失败')
+    ElMessage.error('上传失败: ' + error)
     isUploading.value = false
   }
 }
@@ -689,6 +680,7 @@ const handleSave = async () => {
 
 .package-list {
   margin-top: 20px;
+
   .search-container {
     width: 300px;
   }
