@@ -169,6 +169,7 @@
 
 <script setup>
 import { ref, computed } from 'vue'
+import CryptoJS from 'crypto-js'
 
 // 获取API基础URL
 const apiBaseUrl = import.meta.env.VITE_API_BASE_URL || 'http://127.0.0.1:3000'
@@ -267,11 +268,16 @@ onMounted(() => {
 
 // 计算文件的MD5
 const calculateMD5 = async (file) => {
-  const buffer = await file.arrayBuffer()
-  const hashBuffer = await crypto.subtle.digest('SHA-256', buffer)
-  const hashArray = Array.from(new Uint8Array(hashBuffer))
-  const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('')
-  return hashHex
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const wordArray = CryptoJS.lib.WordArray.create(e.target.result);
+      const hash = CryptoJS.MD5(wordArray).toString();
+      resolve(hash);
+    };
+    reader.onerror = (e) => reject(e);
+    reader.readAsArrayBuffer(file);
+  });
 }
 
 
